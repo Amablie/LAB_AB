@@ -84,4 +84,4 @@ x<-12
 
 y <- 11
 
-cynthia<-100
+cynthia<-10000
