@@ -76,4 +76,10 @@ mydflist[["impression"]] %>%
   ggplot(aes(y = impression, x = date, fill = type)) +
   geom_bar(stat = "identity") +
   theme_minimal()
+
+
 x<-12
+
+
+
+y <- 11
