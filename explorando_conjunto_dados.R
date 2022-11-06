@@ -18,3 +18,7 @@ str(data_cyn)
 ##desconsiderando dados macroeconomicos e GRPs
 only_data<-data_cyn[,c(1,2,3,7,8,9,10,11,12,13,14,21,22,23,24)]
 str(only_data)
+
+##agregando de forma semanal, somando
+
+aggregate(no~DATE+, only_data, sum)
