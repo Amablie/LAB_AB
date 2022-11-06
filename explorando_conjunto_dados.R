@@ -14,3 +14,10 @@ head(data_cyn)
 data_cyn$index <- seq.int(nrow(data_cyn))
 data_cyn
 
+
+
+data_cyn %>% 
+  ggplot(aes(x = DATE,
+             y = Cost_SMS))+
+  geom_line() +
+  facet_wrap(~ year)

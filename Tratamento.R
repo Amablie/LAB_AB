@@ -7,7 +7,7 @@ library(corrgram)
 library(corrplot)
 #install.packages("astsa")
 library(astsa)
-
+library(MASS)
 
 
 
@@ -31,7 +31,7 @@ str(MMM_data)
 
 
 MMM_nonnumeric <- MMM_data[,-c(1,2)] ### apenas valores númericos
-cor(MMM_nonnumeric)
+matrixcor <-cor(MMM_nonnumeric)
 
 MMM_midia <- MMM_data[, -c(1,4,5,6)] ### mídia
 head(MMM_midia)
@@ -39,11 +39,30 @@ head(MMM_midia)
 MMM_cost <- MMM_data[, -c(1,4,5,6,15,16,17,18,19)]
 head(MMM_cost)
 
+MMM_SEMGRP <- MMM_data[, -c(1,15,16,17,18,19)]
 
 
 pairs(MMM_nonnumeric)
 ggcorr(MMM_nonnumeric)
 corrplot(MMM_nonnumeric)
+
+tb <- MMM_nonnumeric %>% 
+  gather(key = "variable", value = "value", -DEMAND)
+
+ggplot(tb,
+       mapping = aes( x= value, y = DEMAND)) +
+  facet_wrap(facets = ~variable, scale = "free_x") +
+  scale_y_sqrt()+
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(tb,
+       mapping = aes( x= value, y = DEMAND)) +
+  facet_wrap(facets = ~variable, scale = "free_x") +
+  scale_y_log10()+
+  geom_point() +
+  geom_smooth(method = "lm")
+
 
 
 ## RESPOSTA ------------------------------------------
@@ -59,7 +78,8 @@ ggplot(MMM_data, aes(x = DATE, y = Unit_Price)) +
 
 
 ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = Unit_Price, y  = DEMAND))+
   geom_point()
@@ -78,45 +98,60 @@ ggplot(MMM_data, aes(x = DATE, y = CPI)) +
 ## MARKETING ----------------------------------------------
 
 ggplot(MMM_data, aes(x = DATE, y = Cost_Newspaper)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = Cost_SMS)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = Cost_Radio)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = Cost_TV)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = Cost_Internet)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_NewPaper)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_SMS)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_Radio)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_Internet)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_TV)) +
-  geom_line()
+  geom_line()+
+  geom_smooth(method = "loess")
 
 
 
 ### Análise de correlação -------------------------------------
+
+
+### Todas as variáveis
+
+######## SEM TRANSFORMAÇÃO
 
 mod<-lm(DEMAND ~ ., data = MMM_nonnumeric)
 
 summary(mod)
 
 
-mod1<-lm(DEMAND ~ CPI+CCI+PPI +Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Radio+
+mod1<-lm(DEMAND ~ CPI+CCI+PPI +Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Newspaper+Cost_Radio+
         Cost_TV+Cost_Internet+GRP_NewPaper+GRP_SMS+GRP_Radio+GRP_Internet+GRP_TV,
         data = MMM_nonnumeric)
 
@@ -146,14 +181,30 @@ mod4<-lm(DEMAND ~ CPI+CCI+Unit_Price +Supply_Data+SALES+Cost_SMS+
 
 summary(mod4)
 
+### variaveis midia
+
+##### SEM  TRANSFORMAÇÃO
+mod_midia<-lm(DEMAND ~ Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Newspaper+Cost_Radio+
+           Cost_TV+Cost_Internet,
+         data = MMM_nonnumeric)
+
+summary(mod_midia)
+
+mod1_midia<-lm(DEMAND ~ Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Radio+
+                Cost_TV+Cost_Internet,
+              data = MMM_nonnumeric)
+
+summary(mod1_midia)
+
+mod2_midia<-lm(DEMAND ~ Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_TV+Cost_Internet,
+               data = MMM_nonnumeric)
+
+summary(mod2_midia)
+
+### Os investimentos que mais influenciam na demanda são os de SMS, TV e Internet. Radio e Jornal foram retirados no ajuste
 
 
-
-
-
-
-
-
+### variveis midia + macro economicas
 
 
 
