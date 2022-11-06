@@ -14,4 +14,3 @@ head(data_cyn)
 data_cyn$index <- seq.int(nrow(data_cyn))
 data_cyn
 
-data_cyn
