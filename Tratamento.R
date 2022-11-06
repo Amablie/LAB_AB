@@ -27,10 +27,17 @@ options (scipen = 999)
 head(MMM_data)
 summary(MMM_data)
 str(MMM_data)
-MMM_nonnumeric <- MMM_data[,-c(1,2)]
-cor(MMM_nonnumeric)
-names(MMM_nonnumeric)
 
+
+
+MMM_nonnumeric <- MMM_data[,-c(1,2)] ### apenas valores númericos
+cor(MMM_nonnumeric)
+
+MMM_midia <- MMM_data[, -c(1,4,5,6)] ### mídia
+head(MMM_midia)
+
+MMM_cost <- MMM_data[, -c(1,4,5,6,15,16,17,18,19)]
+head(MMM_cost)
 
 
 
@@ -38,10 +45,6 @@ pairs(MMM_nonnumeric)
 ggcorr(MMM_nonnumeric)
 corrplot(MMM_nonnumeric)
 
-
-# teste <- MMM_data %>% 
-#   mutate(sales_teste = Unit_Price*Supply_Data)
-# teste[,c("SALES", "sales_teste")]
 
 ## RESPOSTA ------------------------------------------
 
@@ -105,6 +108,9 @@ ggplot(MMM_data, aes(x = DATE, y = GRP_TV)) +
   geom_line()
 
 
+
+### Análise de correlação -------------------------------------
+
 mod<-lm(DEMAND ~ ., data = MMM_nonnumeric)
 
 summary(mod)
@@ -139,6 +145,16 @@ mod4<-lm(DEMAND ~ CPI+CCI+Unit_Price +Supply_Data+SALES+Cost_SMS+
          data = MMM_nonnumeric)
 
 summary(mod4)
+
+
+
+
+
+
+
+
+
+
 
 
 plot(log(MMM_data$Cost_SMS) ~ MMM_data$DEMAND)
