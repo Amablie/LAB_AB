@@ -26,21 +26,49 @@ data_cyn$indice_semana<-indice_semana
 str(data_cyn)
 
 ##desconsiderando dados macroeconomicos e GRPs
+only_data
 only_data<-data_cyn[,c(1,2,3,7,8,9,10,11,12,13,14,21,22,23,24,25)]
 str(only_data)
 
 ##agregando de forma semanal, somando algumas variaveis, mas manter fixo outras
 
-x<-only_data %>%
+teste<-only_data %>%
   group_by(indice_semana) %>%
   summarise(weekly_demand = sum(DEMAND),
             weekly_mean_unit_price=mean(Unit_Price),
             weekly_supply_data=sum(Supply_Data),
             weekly_sales=sum(SALES),
             weekly_cost_sms=sum(Cost_SMS),
-            weekly_cost_newspapes=sum(Cost_Newspaper),
+            weekly_cost_newspapers=sum(Cost_Newspaper),
             weekly_cost_radio=sum(Cost_Radio),
             weekly_cost_tv=sum(Cost_TV))
+teste
+
+ggplot(teste, aes(x = indice_semana, y = weekly_demand)) +
+  geom_line()
 
 
+#Agregação de forma mensal para acompanhar as séries de custos
+ggplot(teste, aes(x = indice_semana, y = weekly_mean_unit_price)) +
+  geom_line()
+
+ggplot(teste, aes(x = indice_semana, y = weekly_supply_data)) +
+  geom_line()
+
+ggplot(teste, aes(x = indice_semana, y = weekly_sales)) +
+  geom_line()
+
+ggplot(teste, aes(x = indice_semana, y = weekly_cost_sms)) +
+  geom_line()
+
+ggplot(teste, aes(x = indice_semana, y = weekly_cost_newspapers)) +
+  geom_line()
+
+ggplot(teste, aes(x = indice_semana, y = weekly_cost_radio)) +
+  geom_line()
+
+ggplot(teste, aes(x = indice_semana, y = weekly_cost_tv)) +
+  geom_line()
+
+#Fazendo a agregação 
 
