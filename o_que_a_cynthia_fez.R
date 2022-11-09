@@ -70,5 +70,5 @@ ggplot(teste, aes(x = indice_semana, y = weekly_cost_radio)) +
 ggplot(teste, aes(x = indice_semana, y = weekly_cost_tv)) +
   geom_line()
 
-#Fazendo a agregação 
+#Fazendo a agregação para verificar o comportamneto ao longo tempo para o investimento
 

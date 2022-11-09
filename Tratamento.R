@@ -1,13 +1,13 @@
-library(tidyverse)
-library(readxl)
-library(dygraphs) 
-library(GGally)
-library(tsible)
-library(corrgram)
-library(corrplot)
+library(tidyverse) ### para manipulação e tratamento dos dados
+library(readxl) ## para ler a base de dados
+#library(dygraphs) ##
+library(GGally) ## para a análise exploratória
+#install.packages("tsibble")
+library(tsibble) # para trabalhar com séries temporais
+library(corrplot) # para analisar a correlação entre as variaveis
 #install.packages("astsa")
-library(astsa)
-library(MASS)
+library(astsa) # para analisar séries temporais
+library(MASS) # para trabalhar com transformação BoxCox
 
 
 
@@ -33,16 +33,15 @@ str(MMM_data)
 MMM_nonnumeric <- MMM_data[,-c(1,2)] ### apenas valores númericos
 matrixcor <-cor(MMM_nonnumeric)
 
-MMM_midia <- MMM_data[, -c(1,4,5,6)] ### mídia
+MMM_midia <- MMM_data[, -c(1,4,5,6)] ### sem as informações macroeconomicas
 head(MMM_midia)
 
-MMM_cost <- MMM_data[, -c(1,4,5,6,15,16,17,18,19)]
+MMM_cost <- MMM_data[, -c(1,4,5,6,15,16,17,18,19)] # sem os dados de GRP
 head(MMM_cost)
 
-MMM_SEMGRP <- MMM_data[, -c(1,15,16,17,18,19)]
 
 
-pairs(MMM_nonnumeric)
+pairs(MMM_nonnumeric) ## 
 ggcorr(MMM_nonnumeric)
 corrplot(MMM_nonnumeric)
 
@@ -62,6 +61,9 @@ ggplot(tb,
   scale_y_log10()+
   geom_point() +
   geom_smooth(method = "lm")
+
+
+ggpairs(MMM_cost)
 
 
 
@@ -211,3 +213,4 @@ summary(mod2_midia)
 plot(log(MMM_data$Cost_SMS) ~ MMM_data$DEMAND)
 
 acf2(MMM_data$Cost_SMS)
+
