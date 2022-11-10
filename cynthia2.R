@@ -77,7 +77,7 @@ data_cyn2<-MMM_data
 
 data_cyn2$DATE <- as.Date(data_cyn2$DATE)
 data_cyn2$anomes<-as.yearmon(data_cyn2$DATE, "%b-%y") %>%
-    format(., "%Y-%m")
+  format(., "%Y-%m")
 
 
 #desconsiderando apenas os dados de GRP numa nova tabela e agregando por mes
@@ -100,6 +100,11 @@ teste2<-only_data2 %>%
 library(lubridate) #inserindo indice para observações do mês
 teste2$ind_mes<-seq.int(nrow(teste2))
 str(teste2)
+
+teste2$anomes<- as.POSIXct(as.numeric(as.character(teste2$anomes)), origin='2010-01')
+
+teste2$ano<-as.yearmon(teste2$anomes, "%b-%y") %>%
+  format(., "%Y")
 
 teste2
 
@@ -127,7 +132,7 @@ ggplot(teste2, aes(x = ind_mes, y = m_supply_data)) +
 
 ggplot(teste2, aes(x = ind_mes, y = m_sales)) +
   geom_line()
-  
+
 ##Investimento em canais
 ggplot(teste2, aes(x = ind_mes, y = m_cost_sms)) +
   geom_line()
@@ -141,6 +146,5 @@ ggplot(teste2, aes(x = ind_mes, y = m_cost_newspapers)) +
 ggplot(teste2, aes(x = ind_mes, y = m_cost_radio)) +
   geom_line()
 
-  
-  
-  
+
+
