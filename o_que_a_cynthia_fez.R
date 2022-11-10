@@ -66,14 +66,9 @@ ggplot(teste, aes(x = indice_semana, y = weekly_cost_radio)) +
 ggplot(teste, aes(x = indice_semana, y = weekly_cost_tv)) +
   geom_line()
 
-<<<<<<< HEAD
-#Fazendo a agregação para verificar o comportamneto ao longo tempo para o investimento
-=======
-###Fazendo a agregação por mês
->>>>>>> 0a0bab592c13130cfd2714aa99a8b1188e80b507
 
-install.packages('zoo')
-install.packages('magrittr')
+# install.packages('zoo')
+# install.packages('magrittr')
 library(tidyverse)
 library(zoo)
 library(magrittr)
@@ -99,6 +94,9 @@ teste2<-only_data2 %>%
             m_CPI=mean(CPI),
             m_CCI=mean(CCI),
             m_PPI=mean(PPI))
+
+
+
 
 
 library(lubridate) #incerindo indice para observações do mês
@@ -140,5 +138,14 @@ ggplot(teste2, aes(x = ind_mes, y = m_cost_newspapers)) +
 
 ggplot(teste2, aes(x = ind_mes, y = m_cost_radio)) +
   geom_line()
+
+
+### facet com dados agregados
+
+teste3 <-
+  teste2 %>% 
+  transform(anydate(anomes))
+
+str(teste3)
 
   

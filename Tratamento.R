@@ -8,7 +8,7 @@ library(corrplot) # para analisar a correlação entre as variaveis
 #install.packages("astsa")
 library(astsa) # para analisar séries temporais
 library(MASS) # para trabalhar com transformação BoxCox
-
+library(anytime)
 
 
 ### BASE DE DADOS --------------------------------------------------------------------
@@ -40,10 +40,11 @@ MMM_cost <- MMM_data[, -c(1,4,5,6,15,16,17,18,19)] # sem os dados de GRP
 head(MMM_cost)
 
 
-
-pairs(MMM_nonnumeric) ## 
+### analisando correlação e dispersão das variáveis
+#pairs(MMM_nonnumeric) 
 ggcorr(MMM_nonnumeric)
 corrplot(MMM_nonnumeric)
+ggpairs(MMM_cost)
 
 tb <- MMM_nonnumeric %>% 
   gather(key = "variable", value = "value", -DEMAND)
@@ -63,7 +64,6 @@ ggplot(tb,
   geom_smooth(method = "lm")
 
 
-ggpairs(MMM_cost)
 
 
 
@@ -143,6 +143,13 @@ ggplot(MMM_data, aes(x = DATE, y = GRP_TV)) +
 
 ### Análise de correlação -------------------------------------
 
+#### PRECISA DE TRANSFORMAÇÃO?????
+plot(log(MMM_data$Cost_SMS) ~ MMM_data$DEMAND)
+
+
+
+
+# -------------------------------------------------------------------------
 
 ### Todas as variáveis
 
@@ -210,7 +217,27 @@ summary(mod2_midia)
 
 
 
-plot(log(MMM_data$Cost_SMS) ~ MMM_data$DEMAND)
+## 
 
-acf2(MMM_data$Cost_SMS)
+# AUTOCORRELAÇÃO ----------------------------------------------------------
+
+## investimento
+acf2(MMM_cost$Cost_SMS)## 
+acf2(MMM_cost$Cost_Newspaper) 
+acf2(MMM_cost$Cost_Radio)
+acf2(MMM_cost$Cost_Internet)
+acf2(MMM_cost$Cost_TV)
+
+
+
+# acf2(MMM_cost$DEMAND)
+# acf2(MMM_cost$CPI)
+# acf2(MMM_data$CCI)
+# acf2(MMM_data$PPI)
+# acf2(MMM_data$Unit_Price)
+# acf2(MMM_data$Supply_Data)
+# acf2(MMM_data$SALES)
+
+
+?acf2
 

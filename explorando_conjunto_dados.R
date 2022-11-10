@@ -20,8 +20,6 @@ indice_semana<-semana[1:2613]
 data_cyn$indice_semana<-indice_semana
 
 
-
-
 str(data_cyn)
 
 ##desconsiderando dados macroeconomicos e GRPs
@@ -53,6 +51,22 @@ data_cyn %>%
 
 
 data_cyn %>% 
+  ggplot(aes(x = DATE,
+             y = Cost_SMS))+
+  geom_line() +
+  facet_wrap(~ year)
+
+
+
+#### facet agregado
+
+
+data_agregado<-teste%>%transform(teste$DATE,
+                               month = format(DATE, "%m"), year = format(DATE, "%Y"))
+
+
+
+data_agregado%>% 
   ggplot(aes(x = DATE,
              y = Cost_SMS))+
   geom_line() +
