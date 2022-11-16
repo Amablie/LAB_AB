@@ -3,7 +3,11 @@ data_cyn<-MMM_data
 head(data_cyn)
 str(data_cyn)
 
-## separadando as datas em dia, mês e ano
+
+
+# Tratamento Data  --------------------------------------------------------
+
+## separadando as datas em dia, mês e ano 
 library(tidyverse)
 data_cyn$DATE <- as.Date(data_cyn$DATE)
 str(data_cyn)
@@ -65,9 +69,9 @@ data_agregado<-teste%>%transform(teste$DATE,
                                month = format(DATE, "%m"), year = format(DATE, "%Y"))
 
 
-
 data_agregado%>% 
   ggplot(aes(x = DATE,
              y = Cost_SMS))+
   geom_line() +
   facet_wrap(~ year)
+

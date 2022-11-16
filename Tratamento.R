@@ -41,7 +41,7 @@ head(MMM_cost)
 
 
 ### analisando correlação e dispersão das variáveis
-#pairs(MMM_nonnumeric) 
+pairs(MMM_nonnumeric) 
 ggcorr(MMM_nonnumeric)
 corrplot(MMM_nonnumeric)
 ggpairs(MMM_cost)
@@ -63,7 +63,7 @@ ggplot(tb,
   geom_point() +
   geom_smooth(method = "lm")
 
-
+#Graficos de dispersão em relação a demanda
 
 
 
@@ -214,7 +214,30 @@ summary(mod2_midia)
 
 
 ### variveis midia + macro economicas
+mod_MACRO<-lm(DEMAND ~ CCI + CPI + PPI + Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Newspaper+Cost_Radio+
+                Cost_TV+Cost_Internet,
+              data = MMM_nonnumeric)
+summary(mod_MACRO)
 
+
+
+mod_MACRO1<-lm(DEMAND ~ CCI + CPI + PPI + Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Radio+
+                Cost_TV+Cost_Internet,
+              data = MMM_nonnumeric)
+summary(mod_MACRO1)
+
+
+mod_MACRO2<-lm(DEMAND ~ CCI + CPI + Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Radio+
+                 Cost_TV+Cost_Internet,
+               data = MMM_nonnumeric)
+summary(mod_MACRO2)
+
+
+
+mod_MACRO3<-lm(DEMAND ~ CCI + CPI + Unit_Price +Supply_Data+SALES+Cost_SMS+
+                 Cost_TV+Cost_Internet,
+               data = MMM_nonnumeric)
+summary(mod_MACRO3)
 
 
 ## 
@@ -230,7 +253,9 @@ acf2(MMM_cost$Cost_TV)
 
 
 
-# acf2(MMM_cost$DEMAND)
+acf2(MMM_cost$DEMAND)
+
+
 # acf2(MMM_cost$CPI)
 # acf2(MMM_data$CCI)
 # acf2(MMM_data$PPI)

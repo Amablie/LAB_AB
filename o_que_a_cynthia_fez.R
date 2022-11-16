@@ -91,6 +91,7 @@ teste2<-only_data2 %>%
             m_cost_newspapers=sum(Cost_Newspaper),
             m_cost_radio=sum(Cost_Radio),
             m_cost_tv=sum(Cost_TV),
+            m_cost_internet = sum(Cost_Internet),
             m_CPI=mean(CPI),
             m_CCI=mean(CCI),
             m_PPI=mean(PPI))
@@ -140,11 +141,22 @@ ggplot(teste2, aes(x = ind_mes, y = m_cost_radio)) +
   geom_line()
 
 
+acf2(teste2$m_cost_sms)## 
+acf2(teste2$m_cost_tv) 
+acf2(teste2$m_cost_newspapers)
+acf2(teste2$m_cost_radio)
+acf2(teste2$m_cost_internet)
+
+
+
+acf2(teste2$m_demand)
+
+
 ### facet com dados agregados
 
 teste3 <-
   teste2 %>% 
-  transform(anydate(anomes))
+  transform(anydate(teste2$anomes))
 
 str(teste3)
 
