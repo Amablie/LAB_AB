@@ -117,6 +117,7 @@ teste2$somes<-format(teste2$data,"%m")
 teste2$soano<-format(teste2$data,"%Y")
 str(teste2)
 base_de_dados<-teste2
+tail(teste2)
 install.packages('rio')
 library(rio)
 

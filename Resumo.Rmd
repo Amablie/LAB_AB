@@ -8,13 +8,29 @@ date: "2022-11-17"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 A base de dados traz as informações sobre a demanda, vendas, investimentos em marketing em diversas mídias de uma indústria de telecomunicações chinesa.
-A granularidade está no formato mensal e possui um período compreendido em:
+A granularidade está no formato mensal e possui um período compreendido entre Jan/2010 a Fev/2017.
+
+```{r}
+#instalando pacotes
+install.packages("readxl")
+library(readxl)
+library(ggplot2)
+dados_mes<-read_excel("dados_mensais.xlsx")
+dados_mes<-as.data.frame(dados_mes)
+str(dados_mes)
+
+summary(dados_mes)
+
+```
+
+```{r}
+ggplot(data=dados_mes, aes(x=ind_mes,y=m_demand)) +
+  geom_line() + xlab("Período") + ylab("Demanda")
 
 
-
+```
 
 ```{r}
 
-a<-1
-a
+
 ```
