@@ -1,14 +1,20 @@
 library(tidyverse)
 library(readxl)
 library(dygraphs) 
+install.packages('GGally')
 library(GGally)
+install.packages('tsible')
 library(tsible)
+install.packages('corrgram')
 library(corrgram)
+install.packages('corrplot')
 library(corrplot)
 #install.packages("astsa")
 library(astsa)
+install.packages('MASS')
 library(MASS)
-
+install.packages('readxl')
+library('readxl')
 
 
 ### BASE DE DADOS --------------------------------------------------------------------

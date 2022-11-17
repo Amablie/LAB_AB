@@ -48,6 +48,7 @@ ggplot(teste, aes(x = indice_semana, y = weekly_demand)) +
 ggplot(teste, aes(x = indice_semana, y = weekly_mean_unit_price)) +
   geom_line()
 
+
 ggplot(teste, aes(x = indice_semana, y = weekly_supply_data)) +
   geom_line()
 
