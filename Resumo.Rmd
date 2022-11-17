@@ -1,0 +1,18 @@
+---
+title: "Resumo"
+output: html_document
+date: "2022-11-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+```{r}
+
+a<-1
+a
+```
