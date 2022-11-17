@@ -1,3 +1,4 @@
+<<<<<<< HEAD:Tratamento.R
 library(tidyverse)
 library(readxl)
 library(dygraphs) 
@@ -15,6 +16,19 @@ install.packages('MASS')
 library(MASS)
 install.packages('readxl')
 library('readxl')
+=======
+library(tidyverse) ### para manipulação e tratamento dos dados
+library(readxl) ## para ler a base de dados
+#library(dygraphs) ##
+library(GGally) ## para a análise exploratória
+#install.packages("tsibble")
+library(tsibble) # para trabalhar com séries temporais
+library(corrplot) # para analisar a correlação entre as variaveis
+#install.packages("astsa")
+library(astsa) # para analisar séries temporais
+library(MASS) # para trabalhar com transformação BoxCox
+library(anytime)
+>>>>>>> e1a57640f560e52caf6aa984f660d75491c37793:EAD 1 - diario.R
 
 
 ### BASE DE DADOS --------------------------------------------------------------------
@@ -39,18 +53,18 @@ str(MMM_data)
 MMM_nonnumeric <- MMM_data[,-c(1,2)] ### apenas valores númericos
 matrixcor <-cor(MMM_nonnumeric)
 
-MMM_midia <- MMM_data[, -c(1,4,5,6)] ### mídia
+MMM_midia <- MMM_data[, -c(1,4,5,6)] ### sem as informações macroeconomicas
 head(MMM_midia)
 
-MMM_cost <- MMM_data[, -c(1,4,5,6,15,16,17,18,19)]
+MMM_cost <- MMM_data[, -c(1,4,5,6,15,16,17,18,19)] # sem os dados de GRP
 head(MMM_cost)
 
-MMM_SEMGRP <- MMM_data[, -c(1,15,16,17,18,19)]
 
-
-pairs(MMM_nonnumeric)
+### analisando correlação e dispersão das variáveis
+pairs(MMM_nonnumeric) 
 ggcorr(MMM_nonnumeric)
 corrplot(MMM_nonnumeric)
+ggpairs(MMM_cost)
 
 tb <- MMM_nonnumeric %>% 
   gather(key = "variable", value = "value", -DEMAND)
@@ -68,6 +82,8 @@ ggplot(tb,
   scale_y_log10()+
   geom_point() +
   geom_smooth(method = "lm")
+
+#Graficos de dispersão em relação a demanda
 
 
 
@@ -147,6 +163,13 @@ ggplot(MMM_data, aes(x = DATE, y = GRP_TV)) +
 
 ### Análise de correlação -------------------------------------
 
+#### PRECISA DE TRANSFORMAÇÃO?????
+plot(log(MMM_data$Cost_SMS) ~ MMM_data$DEMAND)
+
+
+
+
+# -------------------------------------------------------------------------
 
 ### Todas as variáveis
 
@@ -211,9 +234,55 @@ summary(mod2_midia)
 
 
 ### variveis midia + macro economicas
+mod_MACRO<-lm(DEMAND ~ CCI + CPI + PPI + Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Newspaper+Cost_Radio+
+                Cost_TV+Cost_Internet,
+              data = MMM_nonnumeric)
+summary(mod_MACRO)
 
 
 
-plot(log(MMM_data$Cost_SMS) ~ MMM_data$DEMAND)
+mod_MACRO1<-lm(DEMAND ~ CCI + CPI + PPI + Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Radio+
+                Cost_TV+Cost_Internet,
+              data = MMM_nonnumeric)
+summary(mod_MACRO1)
 
-acf2(MMM_data$Cost_SMS)
+
+mod_MACRO2<-lm(DEMAND ~ CCI + CPI + Unit_Price +Supply_Data+SALES+Cost_SMS+Cost_Radio+
+                 Cost_TV+Cost_Internet,
+               data = MMM_nonnumeric)
+summary(mod_MACRO2)
+
+
+
+mod_MACRO3<-lm(DEMAND ~ CCI + CPI + Unit_Price +Supply_Data+SALES+Cost_SMS+
+                 Cost_TV+Cost_Internet,
+               data = MMM_nonnumeric)
+summary(mod_MACRO3)
+
+
+## 
+
+# AUTOCORRELAÇÃO ----------------------------------------------------------
+
+## investimento
+acf2(MMM_cost$Cost_SMS)## 
+acf2(MMM_cost$Cost_Newspaper) 
+acf2(MMM_cost$Cost_Radio)
+acf2(MMM_cost$Cost_Internet)
+acf2(MMM_cost$Cost_TV)
+
+
+
+acf2(MMM_cost$DEMAND)
+
+
+# acf2(MMM_cost$CPI)
+# acf2(MMM_data$CCI)
+# acf2(MMM_data$PPI)
+# acf2(MMM_data$Unit_Price)
+# acf2(MMM_data$Supply_Data)
+# acf2(MMM_data$SALES)
+
+
+?acf2
+

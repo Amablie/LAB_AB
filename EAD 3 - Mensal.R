@@ -67,10 +67,9 @@ ggplot(teste, aes(x = indice_semana, y = weekly_cost_radio)) +
 ggplot(teste, aes(x = indice_semana, y = weekly_cost_tv)) +
   geom_line()
 
-###Fazendo a agregação por mês
 
-install.packages('zoo')
-install.packages('magrittr')
+# install.packages('zoo')
+# install.packages('magrittr')
 library(tidyverse)
 library(zoo)
 library(magrittr)
@@ -93,12 +92,20 @@ teste2<-only_data2 %>%
             m_cost_newspapers=sum(Cost_Newspaper),
             m_cost_radio=sum(Cost_Radio),
             m_cost_tv=sum(Cost_TV),
+            m_cost_internet = sum(Cost_Internet),
             m_CPI=mean(CPI),
             m_CCI=mean(CCI),
             m_PPI=mean(PPI))
 
 
+<<<<<<< HEAD:o_que_a_cynthia_fez.R
 library(lubridate) #inserindo indice para observações do mês
+=======
+
+
+
+library(lubridate) #incerindo indice para observações do mês
+>>>>>>> e1a57640f560e52caf6aa984f660d75491c37793:EAD 3 - Mensal.R
 teste2$ind_mes<-seq.int(nrow(teste2))
 str(teste2)
 
@@ -142,6 +149,29 @@ ggplot(teste2, aes(x = ind_mes, y = m_cost_newspapers)) +
 ggplot(teste2, aes(x = ind_mes, y = m_cost_radio)) +
   geom_line()
 
+<<<<<<< HEAD:o_que_a_cynthia_fez.R
   
   
+=======
+
+acf2(teste2$m_cost_sms)## 
+acf2(teste2$m_cost_tv) 
+acf2(teste2$m_cost_newspapers)
+acf2(teste2$m_cost_radio)
+acf2(teste2$m_cost_internet)
+
+
+
+acf2(teste2$m_demand)
+
+
+### facet com dados agregados
+
+teste3 <-
+  teste2 %>% 
+  transform(anydate(teste2$anomes))
+
+str(teste3)
+
+>>>>>>> e1a57640f560e52caf6aa984f660d75491c37793:EAD 3 - Mensal.R
   

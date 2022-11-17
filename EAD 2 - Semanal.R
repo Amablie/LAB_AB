@@ -3,7 +3,11 @@ data_cyn<-MMM_data
 head(data_cyn)
 str(data_cyn)
 
-## separadando as datas em dia, mês e ano
+
+
+# Tratamento Data  --------------------------------------------------------
+
+## separadando as datas em dia, mês e ano 
 library(tidyverse)
 data_cyn$DATE <- as.Date(data_cyn$DATE)
 str(data_cyn)
@@ -14,17 +18,14 @@ str(data_cyn)
 ##atribuindo indice a cada data
 data_cyn$index <- seq.int(nrow(data_cyn))
 
-<<<<<<< HEAD
 ##atribuindo indice à semana
 semana<-as.vector(rep(c(1:373), each = 7))
 indice_semana<-semana[1:2613]
 data_cyn$indice_semana<-indice_semana
 
-=======
-
 
 str(data_cyn)
->>>>>>> ef7ba8c9a084bb8d84ded3f3a218f6b18d777d5f
+
 ##desconsiderando dados macroeconomicos e GRPs
 only_data<-data_cyn[,c(1,2,3,7,8,9,10,11,12,13,14,21,22,23,24,25)]
 str(only_data)
@@ -42,8 +43,7 @@ x<-only_data %>%
             weekly_cost_radio=sum(Cost_Radio),
             weekly_cost_tv=sum(Cost_TV))
 
-<<<<<<< HEAD
-=======
+
 aggregate(no~DATE+, only_data, sum)
 
 data_cyn %>% 
@@ -53,14 +53,25 @@ data_cyn %>%
   facet_wrap(~ year)
 
 
-# <<<<<<< HEAD
-
 
 data_cyn %>% 
   ggplot(aes(x = DATE,
              y = Cost_SMS))+
   geom_line() +
   facet_wrap(~ year)
-# =======
 
->>>>>>> ef7ba8c9a084bb8d84ded3f3a218f6b18d777d5f
+
+
+#### facet agregado
+
+
+data_agregado<-teste%>%transform(teste$DATE,
+                               month = format(DATE, "%m"), year = format(DATE, "%Y"))
+
+
+data_agregado%>% 
+  ggplot(aes(x = DATE,
+             y = Cost_SMS))+
+  geom_line() +
+  facet_wrap(~ year)
+
