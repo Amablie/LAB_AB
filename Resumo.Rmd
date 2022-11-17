@@ -7,6 +7,8 @@ date: "2022-11-17"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+A base de dados traz as informações sobre a demanda, vendas, investimentos em marketing em diversas mídias de uma indústria de telecomunicações chinesa.
+A granularidade está no formato mensal e possui um período compreendido em:
 
 
 

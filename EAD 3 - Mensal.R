@@ -97,22 +97,33 @@ teste2<-only_data2 %>%
             m_CCI=mean(CCI),
             m_PPI=mean(PPI))
 
+teste2
 
 <<<<<<< HEAD:o_que_a_cynthia_fez.R
 library(lubridate) #inserindo indice para observações do mês
-=======
-
-
-
-library(lubridate) #incerindo indice para observações do mês
->>>>>>> e1a57640f560e52caf6aa984f660d75491c37793:EAD 3 - Mensal.R
 teste2$ind_mes<-seq.int(nrow(teste2))
 str(teste2)
-
 teste2
 
+#transformando anomes em data
+teste2$data<-as.Date(teste2$anomes, format = "%m/%Y")
+str(teste2)
 
+library(lubridate)
+teste2$data<-ym(teste2$anomes)
+str(teste2)
 
+teste2$somes<-format(teste2$data,"%m")
+teste2$soano<-format(teste2$data,"%Y")
+str(teste2)
+base_de_dados<-teste2
+install.packages('rio')
+library(rio)
+
+#exportanto dados no formato mensal na tabela
+export(base_de_dados, file = "dados_mensais.xlsx")
+
+str(base_de_dados)
 #Séries no formato mensal para acompanhar as séries de custos
 ##Dados Macro Econômicos
 ggplot(teste2, aes(x =ind_mes, y = m_PPI)) + geom_line()
@@ -149,8 +160,6 @@ ggplot(teste2, aes(x = ind_mes, y = m_cost_newspapers)) +
 ggplot(teste2, aes(x = ind_mes, y = m_cost_radio)) +
   geom_line()
 
-<<<<<<< HEAD:o_que_a_cynthia_fez.R
-  
   
 =======
 
@@ -165,13 +174,7 @@ acf2(teste2$m_cost_internet)
 acf2(teste2$m_demand)
 
 
-### facet com dados agregados
 
-teste3 <-
-  teste2 %>% 
-  transform(anydate(teste2$anomes))
 
-str(teste3)
 
->>>>>>> e1a57640f560e52caf6aa984f660d75491c37793:EAD 3 - Mensal.R
   
