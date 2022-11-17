@@ -1,3 +1,22 @@
+<<<<<<< HEAD:Tratamento.R
+library(tidyverse)
+library(readxl)
+library(dygraphs) 
+install.packages('GGally')
+library(GGally)
+install.packages('tsible')
+library(tsible)
+install.packages('corrgram')
+library(corrgram)
+install.packages('corrplot')
+library(corrplot)
+#install.packages("astsa")
+library(astsa)
+install.packages('MASS')
+library(MASS)
+install.packages('readxl')
+library('readxl')
+=======
 library(tidyverse) ### para manipulação e tratamento dos dados
 library(readxl) ## para ler a base de dados
 #library(dygraphs) ##
@@ -9,6 +28,7 @@ library(corrplot) # para analisar a correlação entre as variaveis
 library(astsa) # para analisar séries temporais
 library(MASS) # para trabalhar com transformação BoxCox
 library(anytime)
+>>>>>>> e1a57640f560e52caf6aa984f660d75491c37793:EAD 1 - diario.R
 
 
 ### BASE DE DADOS --------------------------------------------------------------------
