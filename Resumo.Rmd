@@ -18,8 +18,10 @@ library(ggplot2)
 dados_mes<-read_excel("dados_mensais.xlsx")
 dados_mes<-as.data.frame(dados_mes)
 str(dados_mes)
-
+install.packages('tsibble')
+library(tsibble)
 summary(dados_mes)
+library(tidyverse)
 
 ```
 
@@ -32,5 +34,9 @@ ggplot(data=dados_mes, aes(x=ind_mes,y=m_demand)) +
 
 ```{r}
 
+demanda_ts %>%
+  mutate(Month = tsibble::yearmonth(data)) %>%
+  as_tsibble(index = somes) %>%
+  dplyr::select(somes, m_demand) ->demanda
 
 ```
