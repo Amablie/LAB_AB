@@ -32,11 +32,38 @@ ggplot(data=dados_mes, aes(x=ind_mes,y=m_demand)) +
 
 ```
 
+
+```{r}
+install.packages('feasts')
+install.packages('forecast')
+library(feasts)
+library(tidyverse)
+library(tsibble)
+library(forecast)
+library(tsibble)
+library(dplyr)
+library(ggplot2)
+install.packages('tsibbledata')
+library(tsibbledata)
+
+
+str(dados_mes)
+```
+
 ```{r}
 
-demanda_ts %>%
-  mutate(Month = tsibble::yearmonth(data)) %>%
-  as_tsibble(index = somes) %>%
-  dplyr::select(somes, m_demand) ->demanda
+dados_mes %>%
+  mutate(Month = tsibble::yearmonth(anomes)) %>%
+  as_tsibble(index = Month) %>%
+  dplyr::select(m_demand) -> demanda_tbl
 
 ```
+
+```{r}
+str(demanda_tbl)
+demanda_tbl_ts<-ts(demanda_tbl, frequency=12, start=c(2010,1))
+str(demanda_tbl_ts)
+seasonplot(demanda_tbl_ts, col=rainbow(12), year.labels=TRUE)
+```
+
+
