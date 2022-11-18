@@ -64,6 +64,7 @@ str(demanda_tbl)
 demanda_tbl_ts<-ts(demanda_tbl, frequency=12, start=c(2010,1))
 str(demanda_tbl_ts)
 seasonplot(demanda_tbl_ts, col=rainbow(12), year.labels=TRUE)
+gg_season(demanda_tbl_ts)
 ```
 
 
