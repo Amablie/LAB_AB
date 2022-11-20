@@ -70,7 +70,7 @@ rm6 <- lm(m_demand ~ m_CPI +m_supply_data +
 summary(rm6)
 
 
-#### Ultimo modelo contem 5 variaveis mais o intercepto que explicam a demanda
+#### Ultimo modelo contem 5 variaveis mais o intercepto que explicam a demanda (variável resposta)
 
 #### Vale comentar que esse não tem as melhores medidas de seleção do modelo,
 #### o erro padrão residual aumenta e o R- quadrado dminui nessa análise
@@ -132,10 +132,64 @@ ts1 <- tslm(m_demand ~ season + m_PPI + m_CCI + m_CPI + m_sales + m_supply_data
 
 summary(ts1)
 
-ts2 <- tslm(m_demand ~ season +
-              m_cost_newspapers + m_cost_radio + m_cost_tv + m_cost_internet, 
-            data = dados_mes_ts)
 
+
+
+ts2 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
+            + m_cost_tv + m_cost_internet, 
+            data = dados_mes_ts)
 
 summary(ts2)
 
+
+ts3 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
+            + m_cost_tv + m_cost_internet, 
+            data = dados_mes_ts)
+
+summary(ts3)
+
+ts4 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
+            + m_cost_tv, 
+            data = dados_mes_ts)
+
+summary(ts4)
+
+
+ts5 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
+            + m_cost_tv, 
+            data = dados_mes_ts)
+
+summary(ts5)
+
+ts6 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data +m_cost_sms
+            + m_cost_newspapers + m_cost_tv, 
+            data = dados_mes_ts)
+
+summary(ts6)
+
+ts7 <- tslm(m_demand ~ season  + m_CPI + m_supply_data +m_cost_sms
+            + m_cost_newspapers + m_cost_tv, 
+            data = dados_mes_ts)
+
+summary(ts7)
+
+
+
+#### Aqui podemos ver que com o acrescimo da sazonalidade o ajuste por 
+#### series temporais apresenta uma melhora comparado ao modelo por regressão multipla
+#### as variaveis que explicam seguem sendo as mesmas, porém assim com no modelo 
+#### anterior podemos ver que o ultimo modelo não tem o melhor ajuste
+
+
+
+
+
+###########  PROXIMOS PASSOS
+
+############### 1. ANÁLISE DE RESÍDUOS
+############### 2. ANÁLISE DE SELEÇÃO DOS MODELOS
+############### 3. AN´LAISE SEGUINDO O MODELO ARIMA
