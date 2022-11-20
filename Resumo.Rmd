@@ -13,20 +13,28 @@ A granularidade está no formato mensal e possui um período compreendido entre 
 ```{r}
 #instalando pacotes
 install.packages("readxl")
+install.packages("lubridate")
+library(lubridate)
 library(readxl)
 library(ggplot2)
 dados_mes<-read_excel("dados_mensais.xlsx")
 dados_mes<-as.data.frame(dados_mes)
+dados_mes$data_data<-format(as.Date(dados_mes$data), "%Y-%m")
+typeof(dados_mes$data_data)
+dados_mes$data_cor<-lubridate::ym(dados_mes$data_data)
+dados_mes$data_fac<-as.factor(dados_mes$data_data)
+head(dados_mes)
+
 str(dados_mes)
 install.packages('tsibble')
 library(tsibble)
-summary(dados_mes)
+head(dados_mes)
 library(tidyverse)
 
 ```
 
 ```{r}
-ggplot(data=dados_mes, aes(x=ind_mes,y=m_demand)) +
+ggplot(data=dados_mes, aes(x=data_cor,y=m_demand)) +
   geom_line() + xlab("Período") + ylab("Demanda")
 
 
@@ -57,6 +65,11 @@ dados_mes %>%
   as_tsibble(index = Month) %>%
   dplyr::select(m_demand) -> demanda_tbl
 
+head(demanda_tbl)
+
+class(dados_mes$data)
+class(dados_mes$data_data)
+class(dados_mes$data_cor)
 ```
 
 ```{r}
@@ -65,6 +78,12 @@ demanda_tbl_ts<-ts(demanda_tbl, frequency=12, start=c(2010,1))
 str(demanda_tbl_ts)
 seasonplot(demanda_tbl_ts, col=rainbow(12), year.labels=TRUE)
 gg_season(demanda_tbl_ts)
+str(demanda_tbl_ts)
 ```
 
+```{}
+
+
+
+```
 
