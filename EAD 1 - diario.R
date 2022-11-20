@@ -267,4 +267,24 @@ acf2(MMM_cost$DEMAND)
 
 
 ?acf2
+#GRP da ídia x Investimento na Mídia
 
+str(MMM_data)
+
+library(ggplot2)
+coeff <- 10
+
+ggplot(MMM_data, aes(x=DATE)) +
+  
+  geom_line( aes(y=Cost_SMS)) + 
+  geom_line( aes(y=GRP_SMS / coeff)) + # Divide by 10 to get the same range than the temperature
+  
+  scale_y_continuous(
+    
+    # Features of the first axis
+    name = "Custo SMS",
+    
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~.*coeff, name="GRP_SMS")
+  )
+head(MMM_data)
