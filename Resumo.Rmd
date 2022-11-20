@@ -17,6 +17,8 @@ install.packages("lubridate")
 library(lubridate)
 library(readxl)
 library(ggplot2)
+
+##Transformando a data em classes diferentes
 dados_mes<-read_excel("dados_mensais.xlsx")
 dados_mes<-as.data.frame(dados_mes)
 dados_mes$data_data<-format(as.Date(dados_mes$data), "%Y-%m")
@@ -34,6 +36,8 @@ library(tidyverse)
 ```
 
 ```{r}
+
+#grafico da demanda
 ggplot(data=dados_mes, aes(x=data_cor,y=m_demand)) +
   geom_line() + xlab("Período") + ylab("Demanda")
 
@@ -59,6 +63,7 @@ str(dados_mes)
 ```
 
 ```{r}
+#Preparando dados para criar grafico da demanda por ano
 
 dados_mes %>%
   mutate(Month = tsibble::yearmonth(anomes)) %>%
@@ -66,21 +71,12 @@ dados_mes %>%
   dplyr::select(m_demand) -> demanda_tbl
 
 head(demanda_tbl)
-
-class(dados_mes$data)
-class(dados_mes$data_data)
-class(dados_mes$data_cor)
 ```
 
-```{r}
-str(dados_mes)
-dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
-str(dados_mes_ts)
-head(dados_mes_ts)
 
-```
 
 ```{}
+#Tranformando demanda em série temporal
 str(demanda_tbl)
 demanda_tbl_ts<-ts(demanda_tbl, frequency=12, start=c(2010,1))
 str(demanda_tbl_ts)
@@ -88,3 +84,11 @@ str(demanda_tbl_ts)
 
 ```
 
+```{r}
+#Transformando toda base em série temporal
+str(dados_mes)
+dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
+str(dados_mes_ts)
+head(dados_mes_ts)
+
+```
