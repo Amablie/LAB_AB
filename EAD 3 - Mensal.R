@@ -99,7 +99,6 @@ teste2<-only_data2 %>%
 
 teste2
 
-<<<<<<< HEAD:o_que_a_cynthia_fez.R
 library(lubridate) #inserindo indice para observações do mês
 teste2$ind_mes<-seq.int(nrow(teste2))
 str(teste2)
@@ -117,7 +116,6 @@ teste2$somes<-format(teste2$data,"%m")
 teste2$soano<-format(teste2$data,"%Y")
 str(teste2)
 base_de_dados<-teste2
-tail(teste2)
 install.packages('rio')
 library(rio)
 
