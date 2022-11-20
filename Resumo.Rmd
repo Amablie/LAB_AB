@@ -42,8 +42,8 @@ ggplot(data=dados_mes, aes(x=data_cor,y=m_demand)) +
 
 
 ```{r}
-install.packages('feasts')
-install.packages('forecast')
+#install.packages('feasts')
+#install.packages('forecast')
 library(feasts)
 library(tidyverse)
 library(tsibble)
@@ -51,7 +51,7 @@ library(forecast)
 library(tsibble)
 library(dplyr)
 library(ggplot2)
-install.packages('tsibbledata')
+#install.packages('tsibbledata')
 library(tsibbledata)
 
 
@@ -73,16 +73,17 @@ class(dados_mes$data_cor)
 ```
 
 ```{r}
-str(demanda_tbl)
-demanda_tbl_ts<-ts(demanda_tbl, frequency=12, start=c(2010,1))
-str(demanda_tbl_ts)
-seasonplot(demanda_tbl_ts, col=rainbow(12), year.labels=TRUE)
-gg_season(demanda_tbl_ts)
-str(demanda_tbl_ts)
+str(dados_mes)
+dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
+str(dados_mes_ts)
+head(dados_mes_ts)
+
 ```
 
 ```{}
-
+str(demanda_tbl)
+demanda_tbl_ts<-ts(demanda_tbl, frequency=12, start=c(2010,1))
+str(demanda_tbl_ts)
 
 
 ```
