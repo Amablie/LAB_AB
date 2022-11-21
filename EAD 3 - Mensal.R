@@ -160,8 +160,6 @@ ggplot(teste2, aes(x = ind_mes, y = m_cost_radio)) +
   geom_line()
 
   
-=======
-
 acf2(teste2$m_cost_sms)## 
 acf2(teste2$m_cost_tv) 
 acf2(teste2$m_cost_newspapers)

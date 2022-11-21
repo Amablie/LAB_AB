@@ -12,8 +12,8 @@ A granularidade está no formato mensal e possui um período compreendido entre 
 
 ```{r}
 #instalando pacotes
-install.packages("readxl")
-install.packages("lubridate")
+# install.packages("readxl")
+# install.packages("lubridate")
 library(lubridate)
 library(readxl)
 library(ggplot2)

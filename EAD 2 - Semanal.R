@@ -8,7 +8,7 @@ str(data_cyn)
 # Tratamento Data  --------------------------------------------------------
 
 ## separadando as datas em dia, mês e ano 
-library(tidyverse)
+#library(tidyverse)
 data_cyn$DATE <- as.Date(data_cyn$DATE)
 str(data_cyn)
 data_cyn<-data_cyn%>%transform(data_cyn$DATE, day = format(DATE, "%d"), 
@@ -41,37 +41,30 @@ x<-only_data %>%
             weekly_cost_sms=sum(Cost_SMS),
             weekly_cost_newspapes=sum(Cost_Newspaper),
             weekly_cost_radio=sum(Cost_Radio),
-            weekly_cost_tv=sum(Cost_TV))
+            weekly_cost_tv=sum(Cost_TV),
+            weekly_cost_internet=sum(Cost_Internet))
 
 
-aggregate(no~DATE+, only_data, sum)
+#aggregate(no~DATE+, only_data, sum)
 
-data_cyn %>% 
-  ggplot(aes(x = DATE,
-             y = Cost_SMS))+
-  geom_line() +
-  facet_wrap(~ year)
+dados_semanais <- x
 
+ggplot(dados_semanais, aes(x = indice_semana, y = weekly_demand)) +
+  geom_line()
 
+acf2(dados_semanais$weekly_demand)
+acf2(dados_semanais$weekly_cost_sms)
+acf2(dados_semanais$weekly_cost_newspapes)
+acf2(dados_semanais$weekly_cost_radio)
+acf2(dados_semanais$weekly_cost_tv)
+acf2(dados_semanais$weekly_cost_internet)
 
-data_cyn %>% 
-  ggplot(aes(x = DATE,
-             y = Cost_SMS))+
-  geom_line() +
-  facet_wrap(~ year)
-
-
-
+rms1<- lm(weekly_demand ~ weekly_cost_
+  data = dados_semanais)
 #### facet agregado
 
-
-data_agregado<-teste%>%transform(teste$DATE,
-                               month = format(DATE, "%m"), year = format(DATE, "%Y"))
-
-
-data_agregado%>% 
-  ggplot(aes(x = DATE,
-             y = Cost_SMS))+
-  geom_line() +
-  facet_wrap(~ year)
-
+# data_cyn %>% 
+#   ggplot(aes(x = DATE,
+#              y = Cost_SMS))+
+#   geom_line() +
+#   facet_wrap(~ year)

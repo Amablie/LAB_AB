@@ -32,6 +32,20 @@ str(dados_mes)
 
 ##### ANÁLISE DE REGRESSÃO MULTIPLA
 
+
+
+
+ggcorr(dados_mes)
+ggpairs(dados_mes)
+
+
+
+
+
+
+
+
+
 rm1 <- lm(m_demand ~ m_PPI + m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
             m_cost_sms +  m_cost_newspapers + m_cost_radio + m_cost_tv + m_cost_internet,
             data = dados_mes)
@@ -70,15 +84,19 @@ rm6 <- lm(m_demand ~ m_CPI +m_supply_data +
 summary(rm6)
 
 
+install.packages("mctest")
+install.packages("lmtest")
+
+
+library(mctest)
+library(lmtest)
+
+imcdiag(rm6, "VIF"
+)
 #### Ultimo modelo contem 5 variaveis mais o intercepto que explicam a demanda (variável resposta)
 
 #### Vale comentar que esse não tem as melhores medidas de seleção do modelo,
 #### o erro padrão residual aumenta e o R- quadrado dminui nessa análise
-
-
-
-
-
 
 
 # -------------------------------------------------------------------------
@@ -183,6 +201,17 @@ summary(ts7)
 #### series temporais apresenta uma melhora comparado ao modelo por regressão multipla
 #### as variaveis que explicam seguem sendo as mesmas, porém assim com no modelo 
 #### anterior podemos ver que o ultimo modelo não tem o melhor ajuste
+
+
+
+
+# CCF ---------------------------------------------------------------------
+
+ccf2(dados_mes$m_CPI, dados_mes$m_demand)
+ccf2(dados_mes$m_supply_data, dados_mes$m_demand)
+ccf2(dados_mes$m_cost_sms, dados_mes$m_demand)
+ccf2(dados_mes$m_cost_newspapers, dados_mes$m_demand)
+ccf2(dados_mes$m_cost_tv, dados_mes$m_demand)
 
 
 
