@@ -35,10 +35,6 @@ str(dados_mes)
 
 
 
-ggcorr(dados_mes)
-ggpairs(dados_mes)
-
-
 
 
 
@@ -84,15 +80,14 @@ rm6 <- lm(m_demand ~ m_CPI +m_supply_data +
 summary(rm6)
 
 
-install.packages("mctest")
-install.packages("lmtest")
+#install.packages("mctest")
+#install.packages("lmtest")
 
 
 library(mctest)
 library(lmtest)
 
-imcdiag(rm6, "VIF"
-)
+imcdiag(rm6, "VIF")
 #### Ultimo modelo contem 5 variaveis mais o intercepto que explicam a demanda (variável resposta)
 
 #### Vale comentar que esse não tem as melhores medidas de seleção do modelo,
@@ -117,19 +112,23 @@ ggplot(dados_mensais, aes(x = ind_mes, y = m_sales)) +
 
 
 hist(dados_mensais$m_demand)
+
 hist(dados_mensais$m_cost_sms)
 hist(dados_mensais$m_cost_internet)
 hist(dados_mensais$m_cost_radio)
 hist(dados_mensais$m_cost_tv)
 
-dados_mensais %>% 
-  mutate(mes = as.numeric(somes))
 
+str(dados_mes)
+dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
+str(dados_mes_ts)
+head(dados_mes_ts)
 
 dadossazonais<- decompose(dados_mes_ts)
 
 season <-dadossazonais$seasonal
 head(season)
+
 
 dadossazonais$
 
