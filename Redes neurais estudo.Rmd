@@ -1,0 +1,29 @@
+---
+title: "Redes neurais"
+author: "Amábile Galdino Leandro"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Documento criado para entender melhor sobre redes neurais e documentar o processo
+
+
+
+
+## O que são redes neurais?
+
+
+
+## Para que servem as redes neurais?
+
+
+
+## Como as redes neurais funcionam?
+
+
+
+## Aplicação de redes neurais
