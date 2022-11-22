@@ -84,15 +84,21 @@ summary(rm6)
 #install.packages("lmtest")
 
 
-library(mctest)
-library(lmtest)
 
-imcdiag(rm6, "VIF")
+
+
 #### Ultimo modelo contem 5 variaveis mais o intercepto que explicam a demanda (variável resposta)
 
 #### Vale comentar que esse não tem as melhores medidas de seleção do modelo,
 #### o erro padrão residual aumenta e o R- quadrado dminui nessa análise
 
+
+library(mctest)
+library(lmtest)
+
+imcdiag(rm6, "VIF")
+
+# modelo apresenta multicolinearidade
 
 # -------------------------------------------------------------------------
 
@@ -203,6 +209,7 @@ summary(ts7)
 
 
 
+imcdiag(ts6, "VIF")
 
 # CCF ---------------------------------------------------------------------
 
