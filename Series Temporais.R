@@ -15,7 +15,7 @@ library(zoo)
 
 library(readxl)
 dados_mensais <- read_excel("dados_mensais.xlsx")
- head(dados_mensais)
+head(dados_mensais)
 str(dados_mensais)
 summary(dados_mensais)
 
@@ -31,15 +31,6 @@ str(dados_mes)
 ############################################################################
 
 ##### ANÁLISE DE REGRESSÃO MULTIPLA
-
-
-
-
-
-
-
-
-
 
 
 rm1 <- lm(m_demand ~ m_PPI + m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
@@ -95,6 +86,7 @@ summary(rm6)
 
 library(mctest)
 library(lmtest)
+
 
 imcdiag(rm6, "VIF")
 
@@ -209,9 +201,12 @@ summary(ts7)
 
 
 
-imcdiag(ts6, "VIF")
+imcdiag(ts7, "VIF")
 
 # CCF ---------------------------------------------------------------------
+
+acf2(dados_mes_ts$m_demand)
+
 
 ccf2(dados_mes$m_CPI, dados_mes$m_demand)
 ccf2(dados_mes$m_supply_data, dados_mes$m_demand)

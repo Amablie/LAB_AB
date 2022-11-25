@@ -75,7 +75,8 @@ head(demanda_tbl)
 
 
 
-```{}
+```{r}
+
 #Tranformando demanda em série temporal
 str(demanda_tbl)
 demanda_tbl_ts<-ts(demanda_tbl, frequency=12, start=c(2010,1))
