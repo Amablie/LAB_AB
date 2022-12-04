@@ -108,6 +108,20 @@ ggplot(dados_mensais, aes(x = ind_mes, y = m_demand)) +
 ggplot(dados_mensais, aes(x = ind_mes, y = m_sales)) +
   geom_line()
 
+ggplot(dados_mensais, aes(x = ind_mes, y = m_cost_sms)) +
+  geom_line()
+
+ggplot(dados_mensais, aes(x = ind_mes, y = m_cost_newspapers)) +
+  geom_line()
+
+ggplot(dados_mensais, aes(x = ind_mes, y = m_cost_internet)) +
+  geom_line()
+
+ggplot(dados_mensais, aes(x = ind_mes, y = m_cost_radio)) +
+  geom_line()
+
+ggplot(dados_mensais, aes(x = ind_mes, y = m_cost_tv)) +
+  geom_line()
 
 hist(dados_mensais$m_demand)
 
@@ -128,7 +142,7 @@ season <-dadossazonais$seasonal
 head(season)
 
 
-dadossazonais$
+dadossazonais
 
 
 dadossazonais$random
