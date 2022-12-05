@@ -20,13 +20,38 @@ str(dados_mensais)
 summary(dados_mensais)
 
 
+### alteração da escala
+
+data_new_escala <-
+  dados_mensais %>% 
+  transform(m_demand = m_demand/10000,
+            m_supply_data  = m_supply_data/10000,
+            m_mean_unit_price = m_mean_unit_price/10000,
+            m_sales = m_sales/10000,
+            m_cost_sms = m_cost_sms/10000,
+            m_cost_newspapers = m_cost_newspapers/10000,
+            m_cost_radio = m_cost_radio/10000,
+            m_cost_tv  = m_cost_tv/10000,
+            m_cost_internet  = m_cost_internet/10000,
+            m_CPI = m_CPI/10000,
+            m_CCI  = m_CCI/10000,
+            m_PPI  = m_PPI/10000)
+
+
+
+
+
+
+
+
+
 # dados em formato de séries temporais
 str(dados_mes)
 dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
 str(dados_mes_ts)
 head(dados_mes_ts)
+str(dados_mes_ts)
 
-str(dados_mes)
 
 ############################################################################
 
@@ -132,23 +157,29 @@ hist(dados_mensais$m_cost_tv)
 
 
 str(dados_mes)
-dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
+
+
+######## DECOMPOSE PARA DEMANDA https://rpubs.com/davoodastaraky/TSA1
+
+dados_mes_ts<-ts(dados_mes$m_demand, frequency=12, start=c(2010,1))
 str(dados_mes_ts)
 head(dados_mes_ts)
 
 dadossazonais<- decompose(dados_mes_ts)
-
-season <-dadossazonais$seasonal
-head(season)
+plot(dadossazonais)
 
 
-dadossazonais
+
+##### VERIFICAR PARA OUTRAS VARIÁVEIS ################################
+######################################################################
 
 
-dadossazonais$random
-head(dadossazonais$trend)
+dados_mes_ts<-ts(dados_mes$m_demand, frequency=12, start=c(2010,1))
+str(dados_mes_ts)
+head(dados_mes_ts)
 
-plot(dadossazonais$seasonal$"x")
+dadossazonais<- decompose(dados_mes_ts)
+plot(dadossazonais)
 
 
 

@@ -116,8 +116,10 @@ teste2$somes<-format(teste2$data,"%m")
 teste2$soano<-format(teste2$data,"%Y")
 str(teste2)
 base_de_dados<-teste2
-install.packages('rio')
-library(rio)
+
+
+#install.packages('rio')
+#library(rio)
 
 #exportanto dados no formato mensal na tabela
 export(base_de_dados, file = "dados_mensais.xlsx")
@@ -165,10 +167,8 @@ acf2(teste2$m_cost_tv)
 acf2(teste2$m_cost_newspapers)
 acf2(teste2$m_cost_radio)
 acf2(teste2$m_cost_internet)
-
-
-
 acf2(teste2$m_demand)
+
 
 
 
