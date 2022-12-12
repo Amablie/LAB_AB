@@ -28,7 +28,7 @@ dados_mes$data_fac<-as.factor(dados_mes$data_data)
 head(dados_mes)
 
 str(dados_mes)
-install.packages('tsibble')
+#install.packages('tsibble')
 library(tsibble)
 head(dados_mes)
 library(tidyverse)

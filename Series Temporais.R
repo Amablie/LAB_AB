@@ -130,6 +130,16 @@ dados_mensais
 ggplot(dados_mensais, aes(x = ind_mes, y = m_demand)) +
   geom_line()
 
+
+ggplot(dados_mensais, aes(x = ind_mes, y = m_CCI)) +
+  geom_line()
+
+ggplot(dados_mensais, aes(x = ind_mes, y = m_PPI)) +
+  geom_line()
+
+ggplot(dados_mensais, aes(x = ind_mes, y = m_CPI)) +
+  geom_line()
+
 ggplot(dados_mensais, aes(x = ind_mes, y = m_sales)) +
   geom_line()
 
@@ -158,28 +168,28 @@ hist(dados_mensais$m_cost_tv)
 
 str(dados_mes)
 
-
+########################################################################################
 ######## DECOMPOSE PARA DEMANDA https://rpubs.com/davoodastaraky/TSA1
 
-dados_mes_ts<-ts(dados_mes$m_demand, frequency=12, start=c(2010,1))
-str(dados_mes_ts)
-head(dados_mes_ts)
+ts_demanda<-ts(dados_mes$m_demand, frequency=12, start=c(2010,1))
+str(ts_demanda)
+head(ts_demanda)
 
-dadossazonais<- decompose(dados_mes_ts)
+dadossazonais<- decompose(ts_demanda)
 plot(dadossazonais)
 
 
 
 ##### VERIFICAR PARA OUTRAS VARIÁVEIS ################################
-######################################################################
 
 
-dados_mes_ts<-ts(dados_mes$m_demand, frequency=12, start=c(2010,1))
+
+dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
 str(dados_mes_ts)
 head(dados_mes_ts)
 
-dadossazonais<- decompose(dados_mes_ts)
-plot(dadossazonais)
+sazidata<- decompose(dados_mes_ts)
+plot(sazidata)
 
 
 
@@ -267,4 +277,10 @@ ccf2(dados_mes$m_cost_tv, dados_mes$m_demand)
 
 ############### 1. ANÁLISE DE RESÍDUOS
 ############### 2. ANÁLISE DE SELEÇÃO DOS MODELOS
-############### 3. AN´LAISE SEGUINDO O MODELO ARIMA
+
+
+
+
+
+###################################################################################
+############### 3. ANÁLISE SEGUINDO O MODELO ARIMA ###############################
