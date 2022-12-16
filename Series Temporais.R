@@ -20,30 +20,6 @@ str(dados_mensais)
 summary(dados_mensais)
 
 
-### alteração da escala
-
-data_new_escala <-
-  dados_mensais %>% 
-  transform(m_demand = m_demand/10000,
-            m_supply_data  = m_supply_data/10000,
-            m_mean_unit_price = m_mean_unit_price/10000,
-            m_sales = m_sales/10000,
-            m_cost_sms = m_cost_sms/10000,
-            m_cost_newspapers = m_cost_newspapers/10000,
-            m_cost_radio = m_cost_radio/10000,
-            m_cost_tv  = m_cost_tv/10000,
-            m_cost_internet  = m_cost_internet/10000,
-            m_CPI = m_CPI/10000,
-            m_CCI  = m_CCI/10000,
-            m_PPI  = m_PPI/10000)
-
-
-
-
-
-
-
-
 
 # dados em formato de séries temporais
 str(dados_mes)
@@ -129,7 +105,6 @@ dados_mensais
 ### variaveis resposta
 ggplot(dados_mensais, aes(x = ind_mes, y = m_demand)) +
   geom_line()
-
 
 ggplot(dados_mensais, aes(x = ind_mes, y = m_CCI)) +
   geom_line()
@@ -271,9 +246,144 @@ ccf2(dados_mes$m_cost_tv, dados_mes$m_demand)
 
 
 
+###########################################################################################
+#### MUDANÇA DA ESCALA DOS DADOS
+### alteração da escala
+
+data_new_escala <-
+  dados_mensais %>% 
+  transform(m_demand = m_demand/1000,
+            m_supply_data  = m_supply_data/1000,
+            m_mean_unit_price = m_mean_unit_price/1000,
+            m_sales = m_sales/1000,
+            m_cost_sms = m_cost_sms/1000,
+            m_cost_newspapers = m_cost_newspapers/1000,
+            m_cost_radio = m_cost_radio/1000,
+            m_cost_tv  = m_cost_tv/1000,
+            m_cost_internet  = m_cost_internet/1000,
+            m_CPI = m_CPI/1000,
+            m_CCI  = m_CCI/1000,
+            m_PPI  = m_PPI/1000)
 
 
-###########  PROXIMOS PASSOS
+str(data_new_escala)
+summary(data_new_escala)
+
+
+data_ts_scale<-ts(data_new_escala, frequency=12, start=c(2010,1))
+str(data_ts_scale)
+head(data_ts_scale)
+str(data_ts_scale)
+
+
+############ GRAFICOS NA NOVA ESCALA
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_demand)) +
+  geom_line()
+
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_CCI)) +
+  geom_line()
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_PPI)) +
+  geom_line()
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_CPI)) +
+  geom_line()
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_sales)) +
+  geom_line()
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_cost_sms)) +
+  geom_line()
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_cost_newspapers)) +
+  geom_line()
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_cost_internet)) +
+  geom_line()
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_cost_radio)) +
+  geom_line()
+
+ggplot(data_ts_scale, aes(x = ind_mes, y = m_cost_tv)) +
+  geom_line()
+
+###### DECOMPOSE
+
+ts_demanda<-ts(data_new_escala$m_demand, frequency=12, start=c(2010,1))
+str(ts_demanda)
+head(ts_demanda)
+
+dadossazonais<- decompose(ts_demanda)
+dadossazonais
+
+
+########### TSLM()
+
+ts1 <- tslm(m_demand ~ season + trend + m_PPI + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
+            + m_cost_tv + m_cost_internet, 
+            data = data_ts_scale)
+
+summary(ts1)
+
+ts2 <- tslm(m_demand ~ season + trend + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
+            + m_cost_tv + m_cost_internet, 
+            data = data_ts_scale)
+
+summary(ts2)
+
+ts3 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
+            + m_cost_tv + m_cost_internet, 
+            data = data_ts_scale)
+
+summary(ts3)
+
+ts4 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv + m_cost_internet, 
+            data = data_ts_scale)
+
+summary(ts4)
+
+ts5 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv, 
+            data = data_ts_scale)
+
+summary(ts5)
+
+
+ts6 <- tslm(m_demand ~ season + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv, 
+            data = data_ts_scale)
+
+summary(ts6)
+
+ts7 <- tslm(m_demand ~ season + m_CPI + m_sales + m_supply_data
+           +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv, 
+            data = data_ts_scale)
+
+summary(ts7)
+
+ts8 <- tslm(m_demand ~ season + m_CPI + m_supply_data
+            +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv, 
+            data = data_ts_scale)
+
+summary(ts8)
+
+
+
+
+
+
+#######################  PROXIMOS PASSOS ################################
 
 ############### 1. ANÁLISE DE RESÍDUOS
 ############### 2. ANÁLISE DE SELEÇÃO DOS MODELOS
