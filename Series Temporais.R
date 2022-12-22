@@ -28,7 +28,6 @@ str(dados_mes_ts)
 head(dados_mes_ts)
 str(dados_mes_ts)
 
-
 ############################################################################
 
 ##### ANÁLISE DE REGRESSÃO MULTIPLA
@@ -379,7 +378,7 @@ ts8 <- tslm(m_demand ~ season + m_CPI + m_supply_data
 summary(ts8)
 
 
-
+acf2(data_new_escala$m_demand)
 
 
 

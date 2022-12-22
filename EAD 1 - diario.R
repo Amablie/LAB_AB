@@ -46,6 +46,7 @@ head(MMM_cost)
 pairs(MMM_nonnumeric) 
 ggcorr(MMM_nonnumeric)
 corrplot(MMM_nonnumeric)
+
 ggpairs(MMM_cost)
 
 tb <- MMM_nonnumeric %>% 

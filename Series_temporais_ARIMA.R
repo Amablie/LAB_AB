@@ -36,6 +36,7 @@ data_new_escala <-
 str(data_new_escala)
 summary(data_new_escala)
 
+
 str(data_new_escala)
 summary(data_new_escala)
 
@@ -58,9 +59,13 @@ plot(dadossazonais)
 
 ######################## MÉDIAS MÓVEIS #########################################
 
-mm<-rollmean(x =data_new_escala$m_demand, k = 3, fill = NA, align = "right")
+mm<-rollmean(x =data_new_escala$m_demand, k = 6, fill = NA, align = "right")
+v <- filter(dd$Total, rep(1/4, 4), sides = 1)
+
+
 plot(y= data_new_escala$m_demand,x = data_new_escala$data, type = "l")
-lines(mm, col="red", lty=1)
+lines(mm, col="purple", lty=1)
+
 grid()
 
 ################### AUTOCORRELAÇÃO #########################
@@ -83,7 +88,16 @@ grid()
 plot(diff(data_new_escala$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
 grid()
 
-##########
+### AQUI PODEMOS VER QUE COM A DIFERENÇA A SERIE PASSA A SER ESTACIONÁRIA
+### TALVEZ SEJA UMA DAS ABORDAGENS UTILIZADAS NA NOSSA ANÁLISE
+
+########## correlação cruzada para a diferença
+
+acf2(data_new_escala$m_demand-fitted(fit))
+
+acf2(diff(data_new_escala$m_demand))
+
+#########
 
 sarima(data_new_escala$m_demand,0,1,0)
 sarima(data_new_escala$m_demand,0,1,1)

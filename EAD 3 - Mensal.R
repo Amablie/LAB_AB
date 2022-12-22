@@ -55,6 +55,9 @@ ggplot(teste, aes(x = indice_semana, y = weekly_supply_data)) +
 ggplot(teste, aes(x = indice_semana, y = weekly_sales)) +
   geom_line()
 
+ggplot(teste, aes(x = indice_semana, y = weekly_demand)) +
+  geom_line()
+
 ggplot(teste, aes(x = indice_semana, y = weekly_cost_sms)) +
   geom_line()
 
@@ -113,6 +116,7 @@ teste2$data<-ym(teste2$anomes)
 str(teste2)
 
 teste2$somes<-format(teste2$data,"%m")
+
 teste2$soano<-format(teste2$data,"%Y")
 str(teste2)
 base_de_dados<-teste2
