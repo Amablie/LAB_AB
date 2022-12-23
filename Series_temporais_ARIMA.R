@@ -34,6 +34,8 @@ data_new_escala <-
 
 
 str(data_new_escala)
+
+
 summary(data_new_escala)
 
 
