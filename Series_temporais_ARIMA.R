@@ -107,3 +107,11 @@ sarima(data_new_escala$m_demand,0,1,1)
 
 auto.arima(data_new_escala$m_demand)
 ############ 
+
+
+
+
+
+
+
+################ MODELO ARIMA COM AS COVARIAVEIS
