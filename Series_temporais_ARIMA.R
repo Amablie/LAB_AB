@@ -112,8 +112,18 @@ auto.arima(data_new_escala$m_demand)
 
 ?arima()
 
-cov <- data_new_escala[,3:13]
+cov <- data_new_escala[,c(1,3:13)]
 str(cov)
-cov<-as.matrix(cov)
+cov<-as.matrix(cov) ### precisa transformar em matriz antes de colocar no modelo
 
-auto.arima(data_new_escala$m_demand, xreg = cov )
+macrocov <- data_new_escala[, c(11:13)]
+midiacov <- data_new_escala[, c(3:10)]
+head(midiacov)
+
+par(mfrow = c(3,1))
+plot(y=macrocov$m_CPI, x=data_new_escala$data, type = "l")
+plot(y=macrocov$m_PPI, x=data_new_escala$data, type = "l")
+plot(y=macrocov$m_CCI, x=data_new_escala$data, type = "l")
+dev.off()
+
+auto.arima(data_new_escala$m_demand, xreg = cov)
