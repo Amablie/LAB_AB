@@ -7,7 +7,7 @@ library(zoo)
 
 
 
-#### BASE  DE DADOS
+#### BASE  DE DADOS ####################################################
 library(readxl)
 dados_mensais <- read_excel("dados_mensais.xlsx")
 head(dados_mensais)
@@ -59,16 +59,15 @@ head(ts_demanda)
 dadossazonais<- decompose(ts_demanda)
 plot(dadossazonais)
 
+
+
 ######################## MÉDIAS MÓVEIS #########################################
 
-mm<-rollmean(x =data_new_escala$m_demand, k = 6, fill = NA, align = "right")
-v <- filter(dd$Total, rep(1/4, 4), sides = 1)
-
-
-plot(y= data_new_escala$m_demand,x = data_new_escala$data, type = "l")
-lines(mm, col="purple", lty=1)
-
-grid()
+autoplot(ts(data_new_escala$m_demand)) +
+  autolayer(ma(data_new_escala$m_demand,7), series="5-MA") +
+  xlab("Year") + ylab("Demand") +
+  scale_colour_manual(values=c("Data"="grey50","5-MA"="red"),
+                      breaks=c("Data","5-MA"))
 
 ################### AUTOCORRELAÇÃO #########################
 
@@ -80,6 +79,8 @@ acf2(data_new_escala$m_demand)
 lag1.plot(data_new_escala$m_demand,5)
 fit<- lm(data_new_escala$m_demand ~ data_new_escala$data, na.action = NULL)
 summary(fit)
+
+###lag 1 para autoregressão
 
 #################
 
@@ -97,6 +98,7 @@ grid()
 
 acf2(data_new_escala$m_demand-fitted(fit))
 
+
 acf2(diff(data_new_escala$m_demand))
 
 #########
@@ -106,24 +108,48 @@ sarima(data_new_escala$m_demand,0,1,1)
 
 
 auto.arima(data_new_escala$m_demand)
-############ 
+
+
+
+
+#############################################################################
 
 ################ MODELO ARIMA COM AS COVARIAVEIS ############################
 
-?arima()
-
-cov <- data_new_escala[,c(1,3:13)]
-str(cov)
-cov<-as.matrix(cov) ### precisa transformar em matriz antes de colocar no modelo
+#############################################################################
 
 macrocov <- data_new_escala[, c(11:13)]
 midiacov <- data_new_escala[, c(3:10)]
-head(midiacov)
+# head(midiacov)
 
-par(mfrow = c(3,1))
-plot(y=macrocov$m_CPI, x=data_new_escala$data, type = "l")
-plot(y=macrocov$m_PPI, x=data_new_escala$data, type = "l")
-plot(y=macrocov$m_CCI, x=data_new_escala$data, type = "l")
-dev.off()
+# par(mfrow = c(3,1))
+# plot(y=macrocov$m_CPI, x=data_new_escala$data, type = "l")
+# plot(y=macrocov$m_PPI, x=data_new_escala$data, type = "l")
+# plot(y=macrocov$m_CCI, x=data_new_escala$data, type = "l")
+# dev.off()
 
-auto.arima(data_new_escala$m_demand, xreg = cov)
+
+cov <- data_new_escala[,c(3:13)]
+str(cov)
+cov<-as.matrix(cov) 
+
+### precisa transformar em matriz antes de colocar no modelo
+
+autoplot(ts(midiacov))
+
+autoplot(ts(macrocov))
+
+plot.ts(midiacov)
+###### Aqui podemos ver que as varivaeis de custo são estacionárias e apresentam
+##### comportamento ciclico, quanto as macroeconomicas e de vendas possue
+##### tendencia e sazonalidade, logo são não estacionárias
+
+
+arima(data_new_escala$m_demand, xreg = cov, order = c(0,1,1))
+sarima(data_new_escala$m_demand, xreg = cov, 0,1,1)
+
+#### fazemos a verificação com os argumentos do modelo apenas para demanda
+#### Apesar de ter funcionado para a demanda não é um bom modelo para as
+#### covariaveis, pois apresenta um valor abaixo do p-valor 
+
+auto.arima(data_new_escala$m_demand, xreg=cov)
