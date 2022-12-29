@@ -152,4 +152,23 @@ sarima(data_new_escala$m_demand, xreg = cov, 0,1,1)
 #### Apesar de ter funcionado para a demanda não é um bom modelo para as
 #### covariaveis, pois apresenta um valor abaixo do p-valor 
 
-auto.arima(data_new_escala$m_demand, xreg=cov)
+
+
+
+##### ANALISANDO MÉDIA MÓVEL ###########
+
+autoplot(ts(data_new_escala$m_CPI)) +
+  autolayer(ma(data_new_escala$m_CPI,6), series="5-MA") +
+  xlab("Year") + ylab("Demand") +
+  scale_colour_manual(values=c("Data"="grey50","5-MA"="red"),
+                      breaks=c("Data","5-MA"))
+
+
+#########################################################
+
+
+
+arima(data_new_escala$m_demand, xreg = cov, order = c(1,0,2))
+
+
+ auto.arima(data_new_escala$m_demand, xreg=cov)

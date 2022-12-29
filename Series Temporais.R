@@ -387,9 +387,10 @@ acf2(data_new_escala$m_demand)
 ############### 1. ANÁLISE DE RESÍDUOS
 ############### 2. ANÁLISE DE SELEÇÃO DOS MODELOS
 
-
+anova(ts1)
 
 
 
 ###################################################################################
 ############### 3. ANÁLISE SEGUINDO O MODELO ARIMA ###############################
+ #### feito

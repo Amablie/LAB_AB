@@ -7,6 +7,43 @@ date: "2022-11-17"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+
+# PROXIMOS PASSOS
+
+
+1. Estudar funções MARIMA  e SARIMA paraa analisar a serie multivariada
+
+2. Análise de resíduos com o tslm()
+
+3. Aplicação de redes neurais
+
+4. Interpretação dos resultados
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 A base de dados traz as informações sobre a demanda, vendas, investimentos em marketing em diversas mídias de uma indústria de telecomunicações chinesa.
 A granularidade está no formato mensal e possui um período compreendido entre Jan/2010 a Fev/2017.
 
@@ -93,3 +130,8 @@ str(dados_mes_ts)
 head(dados_mes_ts)
 
 ```
+
+
+
+
+
