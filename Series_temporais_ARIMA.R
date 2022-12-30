@@ -61,6 +61,7 @@ plot(dadossazonais)
 
 
 
+
 ######################## MÉDIAS MÓVEIS #########################################
 
 autoplot(ts(data_new_escala$m_demand)) +
@@ -145,6 +146,21 @@ plot.ts(midiacov)
 ##### tendencia e sazonalidade, logo são não estacionárias
 
 
+
+
+######## DECOMPOSIÇÃO DAS VARIAVEIS DE MIDIA ########################
+ts_cost<-ts(data_new_escala$m_cost_tv, frequency=12, start=c(2010,1))
+str(ts_cost)
+head(ts_cost)
+
+dsazonais<- decompose(ts_cost)
+plot(dsazonais)
+
+######################################################################
+
+
+
+
 arima(data_new_escala$m_demand, xreg = cov, order = c(0,1,1))
 sarima(data_new_escala$m_demand, xreg = cov, 0,1,1)
 
@@ -157,18 +173,51 @@ sarima(data_new_escala$m_demand, xreg = cov, 0,1,1)
 
 ##### ANALISANDO MÉDIA MÓVEL ###########
 
-autoplot(ts(data_new_escala$m_CPI)) +
-  autolayer(ma(data_new_escala$m_CPI,6), series="5-MA") +
+autoplot(ts(data_new_escala$m_cost_radio)) +
+  autolayer(ma(data_new_escala$m_CPI,2), series="5-MA") +
   xlab("Year") + ylab("Demand") +
   scale_colour_manual(values=c("Data"="grey50","5-MA"="red"),
                       breaks=c("Data","5-MA"))
 
 
+
+#### A estacionaridade tem que ficar na linha do zero, com o acrescimo da média
+#### móvel em midia, podemos suavizar a linha e aproximar de zero
 #########################################################
 
 
 
-arima(data_new_escala$m_demand, xreg = cov, order = c(1,0,2))
+fit1<- arima(data_new_escala$m_demand, xreg = cov, order = c(1,0,1))
+
+checkresiduals(fit1)
+
+sarima(data_new_escala$m_demand, xreg = cov, 1,0,1)
+
+fit2 <- arima(data_new_escala$m_demand, xreg = cov, order = c(2,0,2))
+
+checkresiduals(fit2)
+
+sarima(data_new_escala$m_demand, xreg = cov, 2,0,2)
 
 
- auto.arima(data_new_escala$m_demand, xreg=cov)
+fit3 <- arima(data_new_escala$m_demand, xreg = cov, order = c(3,0,2))
+
+checkresiduals(fit3)
+
+sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)
+
+fit4 <- arima(data_new_escala$m_demand, xreg = cov, order = c(4,0,2))
+
+checkresiduals(fit4)
+#### entender a saída
+sarima(data_new_escala$m_demand, xreg = cov, 4,0,2)
+#### ENTENDER A SAÍDA DO SARIMA
+
+AIC(fit3)  #### melhor modelo ajustado
+AIC(fit4)
+
+
+sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)  ####  
+
+
+
