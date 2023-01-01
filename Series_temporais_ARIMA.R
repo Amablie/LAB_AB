@@ -119,10 +119,12 @@ auto.arima(data_new_escala$m_demand)
 
 #############################################################################
 
-macrocov <- data_new_escala[, c(11:13)]
-midiacov <- data_new_escala[, c(3:10)]
+macrocov <- data_new_escala[, c(3:5,11:13)]
+midiacov <- data_new_escala[, c(6:10)]
 # head(midiacov)
 
+
+head(data_new_escala)
 # par(mfrow = c(3,1))
 # plot(y=macrocov$m_CPI, x=data_new_escala$data, type = "l")
 # plot(y=macrocov$m_PPI, x=data_new_escala$data, type = "l")
@@ -218,6 +220,14 @@ AIC(fit4)
 
 
 sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)  ####  
+
+
+
+
+##### PREDIÇÃO
+
+
+
 
 
 
