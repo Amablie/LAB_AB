@@ -1,0 +1,641 @@
+---
+title: "Time Series Notebook"
+output: html_notebook
+---
+
+
+### **Pacotes utilizados**
+
+```{r}
+library(astsa) # para analisar séries temporais
+library(tsibble)  # para trabalhar com séries temporais
+library(tidyverse) ### para manipulação e tratamento dos dados
+library(forecast)
+library(zoo)
+library(readxl)
+library(ggplot2)
+library(ggfortify)
+library(tidyverse)
+library(zoo)
+library(magrittr)
+```
+
+
+#### **Tratamento da base**
+
+Optamos em transformar a base para o formato **MES** devido ao comportamente mensal das variaveis macroeconomicas observadas, já que elas traziam as dados do mês. Combinado a ideia de que a série traz muitos ruídos em suas varaveis, talvez a agregação pudesse ajudar a suavizar a reta.
+
+```{r}
+MMM_data <- read_excel("MMM_data_excel.xlsx", 
+                                 col_types = c("text", "date", "numeric", 
+                                                    "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric","numeric"))
+
+options (scipen = 999)
+head(MMM_data)
+str(MMM_data)
+```
+
+```{r}
+## RESPOSTA ------------------------------------------
+
+ggplot(MMM_data, aes(x = DATE, y = SALES)) +
+  geom_line()
+ggplot(MMM_data, aes(x = DATE, y = Supply_Data)) +
+  geom_line()
+ggplot(MMM_data, aes(x = DATE, y = Unit_Price)) +
+  geom_line()
+ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
+  geom_line()+
+  geom_smooth(method = "loess")
+
+## MACROECONOMICA -----------------------------------
+
+ggplot(MMM_data, aes(x = DATE, y = PPI)) +
+  geom_line()
+
+ggplot(MMM_data, aes(x = DATE, y = CCI)) +
+  geom_line()
+
+ggplot(MMM_data, aes(x = DATE, y = CPI)) +
+  geom_line()
+
+
+
+```
+
+
+
+```{r}
+
+str(MMM_data)
+data_cyn<-MMM_data
+head(data_cyn)
+str(data_cyn)
+data_cyn2<-MMM_data
+
+
+data_cyn2<-MMM_data
+
+data_cyn2$DATE <- as.Date(data_cyn2$DATE)
+data_cyn2$anomes<-as.yearmon(data_cyn2$DATE, "%b-%y") %>%
+    format(., "%Y-%m")
+
+
+#desconsiderando apenas os dados de GRP numa nova tabela e agregando por mes
+only_data2<-data_cyn2[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,20)]
+teste2<-only_data2 %>%
+  group_by(anomes) %>%
+  summarise(m_demand = sum(DEMAND),
+            m_mean_unit_price=mean(Unit_Price),
+            m_supply_data=sum(Supply_Data),
+            m_sales=sum(SALES),
+            m_cost_sms=sum(Cost_SMS),
+            m_cost_newspapers=sum(Cost_Newspaper),
+            m_cost_radio=sum(Cost_Radio),
+            m_cost_tv=sum(Cost_TV),
+            m_cost_internet = sum(Cost_Internet),
+            m_CPI=mean(CPI),
+            m_CCI=mean(CCI),
+            m_PPI=mean(PPI))
+
+teste2
+
+library(lubridate) #inserindo indice para observações do mês
+teste2$ind_mes<-seq.int(nrow(teste2))
+str(teste2)
+teste2
+
+#transformando anomes em data
+teste2$data<-as.Date(teste2$anomes, format = "%m/%Y")
+str(teste2)
+
+library(lubridate)
+teste2$data<-ym(teste2$anomes)
+str(teste2)
+
+teste2$somes<-format(teste2$data,"%m")
+
+teste2$soano<-format(teste2$data,"%Y")
+str(teste2)
+base_de_dados<-teste2
+
+```
+
+
+```{r}
+ggplot(teste2, aes(x =ind_mes, y = m_PPI)) + geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_CCI)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_PPI)) +
+  geom_line()
+
+##Dados de desempenho de vendas
+ggplot(teste2, aes(x = ind_mes, y = m_demand)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_mean_unit_price)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_supply_data)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_sales)) +
+  geom_line()
+```
+Aqui é visivel como a agregação nos dados reduziu o ruído nos graficos.
+
+
+### **ANÁLISE EXPLORATÓRIA**
+```{r}
+ggplot(teste2, aes(x =ind_mes, y = m_PPI)) + geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_CCI)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_PPI)) +
+  geom_line()
+
+##Dados de desempenho de vendas
+ggplot(teste2, aes(x = ind_mes, y = m_demand)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_mean_unit_price)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_supply_data)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_sales)) +
+  geom_line()
+  
+##Investimento em canais
+ggplot(teste2, aes(x = ind_mes, y = m_cost_sms)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_cost_tv)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_cost_newspapers)) +
+  geom_line()
+
+ggplot(teste2, aes(x = ind_mes, y = m_cost_radio)) +
+  geom_line()
+```
+
+
+```{r}
+tb <- MMM_nonnumeric %>% 
+  gather(key = "variable", value = "value", -DEMAND)
+
+ggplot(tb,
+       mapping = aes( x= value, y = DEMAND)) +
+  facet_wrap(facets = ~variable, scale = "free_x") +
+  scale_y_sqrt()+
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(tb,
+       mapping = aes( x= value, y = DEMAND)) +
+  facet_wrap(facets = ~variable, scale = "free_x") +
+  scale_y_log10()+
+  geom_point() +
+  geom_smooth(method = "lm")
+
+```
+
+
+```{r}
+pairs(MMM_nonnumeric)
+```
+
+
+```{r}
+ggcorr(MMM_nonnumeric)
+```
+
+
+
+### **ANALISE DE AUTOCORRELAÇÃO CRUZADA**
+
+```{r}
+
+acf2(teste2$m_cost_sms)## 
+acf2(teste2$m_cost_tv) 
+acf2(teste2$m_cost_newspapers)
+acf2(teste2$m_cost_radio)
+acf2(teste2$m_cost_internet)
+acf2(teste2$m_demand)
+
+```
+
+
+### **TRANSFORMAND DADOS EM SERIES TEMPORAIS**
+
+```{r}
+
+dados_mes <- read_excel("dados_mensais.xlsx")
+# dados em formato de séries temporais
+str(dados_mes)
+dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
+str(dados_mes_ts)
+head(dados_mes_ts)
+str(dados_mes_ts)
+
+```
+
+### **DECOMPOSIÇÃO**
+
+```{r}
+
+########### PARA VARIAVEL RESPOSTA ###################
+
+ts_demanda<-ts(dados_mes$m_demand, frequency=12, start=c(2010,1))
+str(ts_demanda)
+head(ts_demanda)
+
+dadossazonais<- decompose(ts_demanda)
+plot(dadossazonais)
+
+
+
+##### VERIFICAR PARA OUTRAS VARIÁVEIS ################################
+
+
+
+dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
+str(dados_mes_ts)
+head(dados_mes_ts)
+
+sazidata<- decompose(dados_mes_ts)
+plot(sazidata)
+
+```
+
+
+
+
+
+## **TSLM**
+
+##### ANÁLISE DE REGRESSÃO MULTIPLA
+```{r}
+
+
+rm1 <- lm(m_demand ~ m_PPI + m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
+            m_cost_sms +  m_cost_newspapers + m_cost_radio + m_cost_tv + m_cost_internet,
+            data = dados_mes)
+
+summary(rm1)
+
+rm2 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
+            m_cost_sms +  m_cost_newspapers + m_cost_radio + m_cost_tv + m_cost_internet,
+          data = dados_mes)
+
+summary(rm2)
+
+
+rm3 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
+            m_cost_sms +  m_cost_newspapers + m_cost_tv + m_cost_internet,
+          data = dados_mes)
+
+summary(rm3)
+
+rm4 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
+            m_cost_sms +  m_cost_newspapers + m_cost_tv,
+          data = dados_mes)
+
+summary(rm4)
+
+rm5 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + 
+            m_cost_sms +  m_cost_newspapers + m_cost_tv,
+          data = dados_mes)
+
+summary(rm5)
+
+rm6 <- lm(m_demand ~ m_CPI +m_supply_data + 
+            m_cost_sms +  m_cost_newspapers + m_cost_tv,
+          data = dados_mes)
+
+summary(rm6)
+
+
+#### Ultimo modelo contem 5 variaveis mais o intercepto que explicam a demanda (variável resposta)
+
+#### Vale comentar que esse não tem as melhores medidas de seleção do modelo,
+#### o erro padrão residual aumenta e o R- quadrado dminui nessa análise
+
+
+library(mctest)
+library(lmtest)
+
+
+imcdiag(rm6, "VIF")
+
+# modelo apresenta multicolinearidade
+
+
+```
+
+Necessário analisar os resíduos antes de concluir essa analise
+
+##### COM TSLM
+
+```{r}
+
+ts1 <- tslm(m_demand ~ season + m_PPI + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
+            + m_cost_tv + m_cost_internet, 
+            data = dados_mes_ts)
+
+summary(ts1)
+
+
+
+
+ts2 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
+            + m_cost_tv + m_cost_internet, 
+            data = dados_mes_ts)
+
+summary(ts2)
+
+
+ts3 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
+            + m_cost_tv + m_cost_internet, 
+            data = dados_mes_ts)
+
+summary(ts3)
+
+ts4 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
+            + m_cost_tv, 
+            data = dados_mes_ts)
+
+summary(ts4)
+
+
+ts5 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
+            + m_cost_tv, 
+            data = dados_mes_ts)
+
+summary(ts5)
+
+ts6 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data +m_cost_sms
+            + m_cost_newspapers + m_cost_tv, 
+            data = dados_mes_ts)
+
+summary(ts6)
+
+ts7 <- tslm(m_demand ~ season  + m_CPI + m_supply_data +m_cost_sms
+            + m_cost_newspapers + m_cost_tv, 
+            data = dados_mes_ts)
+
+summary(ts7)
+
+
+imcdiag(ts7, "VIF")
+
+```
+
+Fazer análise de resídios
+
+
+
+### **ANALISE DE SERIES TEMPORAIS PARA DEMANDA**
+
+```{r}
+data_new_escala <-
+  dados_mensais %>% 
+  transform(m_demand = m_demand/1000,
+            m_supply_data  = m_supply_data/1000,
+            m_mean_unit_price = m_mean_unit_price/1000,
+            m_sales = m_sales/1000,
+            m_cost_sms = m_cost_sms/1000,
+            m_cost_newspapers = m_cost_newspapers/1000,
+            m_cost_radio = m_cost_radio/1000,
+            m_cost_tv  = m_cost_tv/1000,
+            m_cost_internet  = m_cost_internet/1000,
+            m_CPI = m_CPI/1000,
+            m_CCI  = m_CCI/1000,
+            m_PPI  = m_PPI/1000)
+
+
+str(data_new_escala)
+
+
+summary(data_new_escala)
+
+
+str(data_new_escala)
+summary(data_new_escala)
+
+
+data_ts_scale<-ts(data_new_escala, frequency=12, start=c(2010,1))
+str(data_ts_scale)
+head(data_ts_scale)
+str(data_ts_scale)
+
+############################## ARIMA PARA DEMANDA ####################################################
+
+##### ANALISE DE TENDENCIA
+
+ts_demanda<-ts(data_new_escala$m_demand, frequency=12, start=c(2010,1))
+str(ts_demanda)
+head(ts_demanda)
+
+dadossazonais<- decompose(ts_demanda)
+plot(dadossazonais)
+
+
+
+
+######################## MÉDIAS MÓVEIS #########################################
+
+autoplot(ts(data_new_escala$m_demand)) +
+  autolayer(ma(data_new_escala$m_demand,7), series="5-MA") +
+  xlab("Year") + ylab("Demand") +
+  scale_colour_manual(values=c("Data"="grey50","5-MA"="red"),
+                      breaks=c("Data","5-MA"))
+
+################### AUTOCORRELAÇÃO #########################
+
+acf(data_new_escala$m_demand)
+acf2(data_new_escala$m_demand)
+
+#################### plotando ajuste do modelo ############################
+
+lag1.plot(data_new_escala$m_demand,5)
+fit<- lm(data_new_escala$m_demand ~ data_new_escala$data, na.action = NULL)
+summary(fit)
+
+###lag 1 para autoregressão
+
+#################
+
+## retifica??o e diferen?a
+par(mfrow=c(2,1), mar=c(3,3,1,1), mgp=c(1.6,.6,0))
+plot(data_new_escala$m_demand-fitted(fit),x= data_new_escala$data, xlab="Tempo", ylab="Série do resto", pch=19, col="skyblue3", type = "l")
+grid()
+plot(diff(data_new_escala$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
+grid()
+
+### AQUI PODEMOS VER QUE COM A DIFERENÇA A SERIE PASSA A SER ESTACIONÁRIA
+### TALVEZ SEJA UMA DAS ABORDAGENS UTILIZADAS NA NOSSA ANÁLISE
+
+########## correlação cruzada para a diferença
+
+acf2(data_new_escala$m_demand-fitted(fit))
+
+
+acf2(diff(data_new_escala$m_demand))
+
+#########
+
+sarima(data_new_escala$m_demand,0,1,0)
+sarima(data_new_escala$m_demand,0,1,1)
+
+
+auto.arima(data_new_escala$m_demand)
+
+
+```
+
+
+
+
+
+
+
+
+
+#### **MODELO COM AS COVARIAVEIS**
+
+
+```{r}
+
+macrocov <- data_new_escala[, c(3:5,11:13)]
+midiacov <- data_new_escala[, c(6:10)]
+# head(midiacov)
+
+
+head(data_new_escala)
+# par(mfrow = c(3,1))
+# plot(y=macrocov$m_CPI, x=data_new_escala$data, type = "l")
+# plot(y=macrocov$m_PPI, x=data_new_escala$data, type = "l")
+# plot(y=macrocov$m_CCI, x=data_new_escala$data, type = "l")
+# dev.off()
+
+
+cov <- data_new_escala[,c(3:13)]
+str(cov)
+cov<-as.matrix(cov) 
+
+### precisa transformar em matriz antes de colocar no modelo
+
+autoplot(ts(midiacov))
+
+autoplot(ts(macrocov))
+
+plot.ts(midiacov)
+###### Aqui podemos ver que as varivaeis de custo são estacionárias e apresentam
+##### comportamento ciclico, quanto as macroeconomicas e de vendas possue
+##### tendencia e sazonalidade, logo são não estacionárias
+
+
+
+
+######## DECOMPOSIÇÃO DAS VARIAVEIS DE MIDIA ########################
+ts_cost<-ts(data_new_escala$m_cost_tv, frequency=12, start=c(2010,1))
+str(ts_cost)
+head(ts_cost)
+
+dsazonais<- decompose(ts_cost)
+plot(dsazonais)
+
+######################################################################
+
+
+
+
+arima(data_new_escala$m_demand, xreg = cov, order = c(0,1,1))
+sarima(data_new_escala$m_demand, xreg = cov, 0,1,1)
+
+#### fazemos a verificação com os argumentos do modelo apenas para demanda
+#### Apesar de ter funcionado para a demanda não é um bom modelo para as
+#### covariaveis, pois apresenta um valor abaixo do p-valor 
+
+
+
+
+##### ANALISANDO MÉDIA MÓVEL ###########
+
+autoplot(ts(data_new_escala$m_cost_radio)) +
+  autolayer(ma(data_new_escala$m_CPI,2), series="5-MA") +
+  xlab("Year") + ylab("Demand") +
+  scale_colour_manual(values=c("Data"="grey50","5-MA"="red"),
+                      breaks=c("Data","5-MA"))
+
+
+
+#### A estacionaridade tem que ficar na linha do zero, com o acrescimo da média
+#### móvel em midia, podemos suavizar a linha e aproximar de zero
+#########################################################
+
+
+
+fit1<- arima(data_new_escala$m_demand, xreg = cov, order = c(1,0,1))
+
+checkresiduals(fit1)
+
+sarima(data_new_escala$m_demand, xreg = cov, 1,0,1)
+
+fit2 <- arima(data_new_escala$m_demand, xreg = cov, order = c(2,0,2))
+
+checkresiduals(fit2)
+
+sarima(data_new_escala$m_demand, xreg = cov, 2,0,2)
+
+
+fit3 <- arima(data_new_escala$m_demand, xreg = cov, order = c(3,0,2))
+
+checkresiduals(fit3)
+
+sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)
+
+fit4 <- arima(data_new_escala$m_demand, xreg = cov, order = c(4,0,2))
+
+checkresiduals(fit4)
+#### entender a saída
+sarima(data_new_escala$m_demand, xreg = cov, 4,0,2)
+#### ENTENDER A SAÍDA DO SARIMA
+
+AIC(fit3)  #### melhor modelo ajustado
+AIC(fit4)
+
+
+sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)  ####  
+
+
+##### PREDIÇÃO[
+
+sarima.for(data_new_escala$m_demand,
+           xreg = cov, 
+           newxreg = cov[20:50,], 5,
+           3,0,2)
+
+
+# predict(fit3,newxreg = cov[1:2], h=4)
+
+
+
+
+```
+

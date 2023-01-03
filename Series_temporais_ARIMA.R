@@ -4,8 +4,9 @@ library(tidyverse) ### para manipulação e tratamento dos dados
 #install.packages("forecast")
 library(forecast)
 library(zoo)
-
-
+library(ggplot2)
+library(ggfortify)
+#install.packages("ggfortify")
 
 #### BASE  DE DADOS ####################################################
 library(readxl)
@@ -222,12 +223,14 @@ AIC(fit4)
 sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)  ####  
 
 
+##### PREDIÇÃO[
+
+sarima.for(data_new_escala$m_demand,
+           xreg = cov, 
+           newxreg = cov[20:50,], 5,
+           3,0,2)
 
 
-##### PREDIÇÃO
-
-
-
-
+predict(fit3,newxreg = cov[1:2], h=4)
 
 
