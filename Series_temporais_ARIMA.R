@@ -223,7 +223,7 @@ AIC(fit4)
 sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)  ####  
 
 
-##### PREDIÇÃO[
+##### PREDIÇÃO
 
 sarima.for(data_new_escala$m_demand,
            xreg = cov, 
@@ -231,6 +231,6 @@ sarima.for(data_new_escala$m_demand,
            3,0,2)
 
 
-predict(fit3,newxreg = cov[1:2], h=4)
+
 
 

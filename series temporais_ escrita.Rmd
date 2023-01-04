@@ -23,7 +23,7 @@ library(magrittr)
 
 #### **Tratamento da base**
 
-Optamos em transformar a base para o formato **MES** devido ao comportamente mensal das variaveis macroeconomicas observadas, já que elas traziam as dados do mês. Combinado a ideia de que a série traz muitos ruídos em suas varaveis, talvez a agregação pudesse ajudar a suavizar a reta.
+Primeiro carregamos a base de dados, iniciamos nossa análise com 19 variáveis e 2613 observações.
 
 ```{r}
 MMM_data <- read_excel("MMM_data_excel.xlsx", 
@@ -34,10 +34,41 @@ MMM_data <- read_excel("MMM_data_excel.xlsx",
                                                     "numeric", "numeric", "numeric", 
                                                     "numeric", "numeric", "numeric","numeric"))
 
-options (scipen = 999)
 head(MMM_data)
+dim(MMM_data)
 str(MMM_data)
+
 ```
+
+
+### **ANÁLISE EXPLORATÓRIA**
+
+```{r}
+
+options (scipen = 999)
+summary(MMM_data)
+
+```
+
+
+```{r}
+tb <- MMM_nonnumeric %>% 
+  gather(key = "variable", value = "value", -DEMAND)
+
+ggplot(tb,
+       mapping = aes( x= value, y = DEMAND)) +
+  facet_wrap(facets = ~variable, scale = "free_x") +
+  scale_y_sqrt()+
+  geom_point() 
+
+```
+
+
+```{r}
+ggcorr(MMM_nonnumeric)
+```
+
+
 
 ```{r}
 ## RESPOSTA ------------------------------------------
@@ -52,6 +83,13 @@ ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
   geom_line()+
   geom_smooth(method = "loess")
 
+```
+
+Escolhemos demanda como nossa variável resposta
+
+
+```{r}
+
 ## MACROECONOMICA -----------------------------------
 
 ggplot(MMM_data, aes(x = DATE, y = PPI)) +
@@ -63,10 +101,11 @@ ggplot(MMM_data, aes(x = DATE, y = CCI)) +
 ggplot(MMM_data, aes(x = DATE, y = CPI)) +
   geom_line()
 
-
-
 ```
 
+Como é possível observar as varipaveis estão com agregações diferentes, as variáveis macroeconomicas estão no formato mês e as demais estão diárias.
+
+Optamos em transformar a base para o formato **mês** devido ao comportamente mensal das variaveis macroeconomicas observadas,combinado a ideia de que a série traz muitos ruídos em suas variaveis, talvez a agregação pudesse ajudar a suavizar o comportamento das outras variáveis e reduzir o ruído.
 
 
 ```{r}
@@ -113,7 +152,6 @@ teste2
 teste2$data<-as.Date(teste2$anomes, format = "%m/%Y")
 str(teste2)
 
-library(lubridate)
 teste2$data<-ym(teste2$anomes)
 str(teste2)
 
@@ -127,6 +165,8 @@ base_de_dados<-teste2
 
 
 ```{r}
+
+### MACRO ECONOMICOS
 ggplot(teste2, aes(x =ind_mes, y = m_PPI)) + geom_line()
 
 ggplot(teste2, aes(x = ind_mes, y = m_CCI)) +
@@ -135,7 +175,7 @@ ggplot(teste2, aes(x = ind_mes, y = m_CCI)) +
 ggplot(teste2, aes(x = ind_mes, y = m_PPI)) +
   geom_line()
 
-##Dados de desempenho de vendas
+## VENDAS
 ggplot(teste2, aes(x = ind_mes, y = m_demand)) +
   geom_line()
 
@@ -151,29 +191,9 @@ ggplot(teste2, aes(x = ind_mes, y = m_sales)) +
 Aqui é visivel como a agregação nos dados reduziu o ruído nos graficos.
 
 
-### **ANÁLISE EXPLORATÓRIA**
+
 ```{r}
-ggplot(teste2, aes(x =ind_mes, y = m_PPI)) + geom_line()
 
-ggplot(teste2, aes(x = ind_mes, y = m_CCI)) +
-  geom_line()
-
-ggplot(teste2, aes(x = ind_mes, y = m_PPI)) +
-  geom_line()
-
-##Dados de desempenho de vendas
-ggplot(teste2, aes(x = ind_mes, y = m_demand)) +
-  geom_line()
-
-ggplot(teste2, aes(x = ind_mes, y = m_mean_unit_price)) +
-  geom_line()
-
-ggplot(teste2, aes(x = ind_mes, y = m_supply_data)) +
-  geom_line()
-
-ggplot(teste2, aes(x = ind_mes, y = m_sales)) +
-  geom_line()
-  
 ##Investimento em canais
 ggplot(teste2, aes(x = ind_mes, y = m_cost_sms)) +
   geom_line()
@@ -189,38 +209,6 @@ ggplot(teste2, aes(x = ind_mes, y = m_cost_radio)) +
 ```
 
 
-```{r}
-tb <- MMM_nonnumeric %>% 
-  gather(key = "variable", value = "value", -DEMAND)
-
-ggplot(tb,
-       mapping = aes( x= value, y = DEMAND)) +
-  facet_wrap(facets = ~variable, scale = "free_x") +
-  scale_y_sqrt()+
-  geom_point() +
-  geom_smooth(method = "lm")
-
-ggplot(tb,
-       mapping = aes( x= value, y = DEMAND)) +
-  facet_wrap(facets = ~variable, scale = "free_x") +
-  scale_y_log10()+
-  geom_point() +
-  geom_smooth(method = "lm")
-
-```
-
-
-```{r}
-pairs(MMM_nonnumeric)
-```
-
-
-```{r}
-ggcorr(MMM_nonnumeric)
-```
-
-
-
 ### **ANALISE DE AUTOCORRELAÇÃO CRUZADA**
 
 ```{r}
@@ -231,9 +219,16 @@ acf2(teste2$m_cost_newspapers)
 acf2(teste2$m_cost_radio)
 acf2(teste2$m_cost_internet)
 acf2(teste2$m_demand)
+acf2(teste2$m_sales)
+acf2(teste2$m_supply_data)
+acf2(teste2$m_PPI)
+acf2(teste2$m_CCI)
+acf2(teste2$m_CPI)
+
+
 
 ```
-
+Olhando para o ACF de demanda podemos ver que talvez seja necessário trabalhar com diferença para tornar os dados estacionários.
 
 ### **TRANSFORMAND DADOS EM SERIES TEMPORAIS**
 
@@ -268,7 +263,7 @@ plot(dadossazonais)
 
 
 
-dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
+dados_mes_ts<-ts(dados_mes$m_cost_sms, frequency=12, start=c(2010,1))
 str(dados_mes_ts)
 head(dados_mes_ts)
 

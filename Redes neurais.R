@@ -1,7 +1,7 @@
 # https://www.learnbymarketing.com/tutorials/neural-networks-in-r-tutorial/
 # https://www.analyticsvidhya.com/blog/2017/09/creating-visualizing-neural-network-in-r/
 
-install.packages("caret")
+##install.packages("caret")
 library(neuralnet)
 library(keras) # for deep learning
 library(tidyverse) # general utility functions
@@ -14,7 +14,7 @@ str(dados_mensais)
 summary(dados_mensais)
 
 
-########### NOVA ESCALA
+############################# NOVA ESCALA ########################
 
 data_new_escala <-
   dados_mensais %>% 
@@ -47,9 +47,8 @@ str(data_ts_scale)
 head(data_ts_scale)
 str(data_ts_scale)
 
-############################## ARIMA PARA DEMANDA ####################################################
+#################################################################
 
 
 
 
-fit <- nnetar(data_new_escala, lambda=0)
