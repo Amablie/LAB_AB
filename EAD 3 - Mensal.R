@@ -175,7 +175,12 @@ acf2(teste2$m_demand)
 
 
 
-
-
+dia <- ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
+  geom_line()
+semana <- ggplot(teste, aes(x = indice_semana, y = weekly_demand)) +
+  geom_line()
+mes <- ggplot(teste2, aes(x = ind_mes, y = m_demand)) +
+  geom_line()
+grid.arrange(dia, semana, mes,  nrow = 3)
 
   

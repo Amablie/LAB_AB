@@ -151,12 +151,10 @@ teste2<-only_data2 %>%
             m_CCI=mean(CCI),
             m_PPI=mean(PPI))
 
-teste2
-
 library(lubridate) #inserindo indice para observações do mês
 teste2$ind_mes<-seq.int(nrow(teste2))
 str(teste2)
-teste2
+head(teste2)
 
 #transformando anomes em data
 teste2$data<-as.Date(teste2$anomes, format = "%m/%Y")
@@ -298,11 +296,17 @@ rm1 <- lm(m_demand ~ m_PPI + m_CCI + m_CPI + m_sales + m_supply_data + m_mean_un
 
 summary(rm1)
 
+par(mfrow = c(2,2))
+plot(rm1, which = c(1:4), pch = 20)
+
 rm2 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
             m_cost_sms +  m_cost_newspapers + m_cost_radio + m_cost_tv + m_cost_internet,
           data = dados_mes)
 
 summary(rm2)
+
+par(mfrow = c(2,2))
+plot(rm2, which = c(1:4), pch = 20)
 
 
 rm3 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
@@ -311,11 +315,17 @@ rm3 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price
 
 summary(rm3)
 
+par(mfrow = c(2,2))
+plot(rm3, which = c(1:4), pch = 20)
+
 rm4 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
             m_cost_sms +  m_cost_newspapers + m_cost_tv,
           data = dados_mes)
 
 summary(rm4)
+
+par(mfrow = c(2,2))
+plot(rm4, which = c(1:4), pch = 20)
 
 rm5 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + 
             m_cost_sms +  m_cost_newspapers + m_cost_tv,
@@ -323,12 +333,17 @@ rm5 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data +
 
 summary(rm5)
 
+par(mfrow = c(2,2))
+plot(rm5, which = c(1:4), pch = 20)
+
 rm6 <- lm(m_demand ~ m_CPI +m_supply_data + 
             m_cost_sms +  m_cost_newspapers + m_cost_tv,
           data = dados_mes)
 
 summary(rm6)
 
+par(mfrow = c(2,2))
+plot(rm5, which = c(1:4), pch = 20)
 
 #### Ultimo modelo contem 5 variaveis mais o intercepto que explicam a demanda (variável resposta)
 
@@ -347,70 +362,90 @@ imcdiag(rm6, "VIF")
 
 ```
 
-Necessário analisar os resíduos antes de concluir essa analise
+Possui problemas de multicolinearidade.
+
+Fico meio em duvida sobre a qualidade dos dados selecionados para a análise.
 
 ##### COM TSLM
 
 ```{r}
 
-ts1 <- tslm(m_demand ~ season + m_PPI + m_CCI + m_CPI + m_sales + m_supply_data
+ts1 <- tslm(m_demand ~ season + trend + m_PPI + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
             + m_cost_tv + m_cost_internet, 
-            data = dados_mes_ts)
+            data = data_ts_scale)
 
 summary(ts1)
+anova(ts1)
+checkresiduals(ts1)
 
-
-
-
-ts2 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+ts2 <- tslm(m_demand ~ season + trend + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
             + m_cost_tv + m_cost_internet, 
-            data = dados_mes_ts)
+            data = data_ts_scale)
 
 summary(ts2)
-
+anova(ts2)
+checkresiduals(ts2)
 
 ts3 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
-            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
             + m_cost_tv + m_cost_internet, 
-            data = dados_mes_ts)
+            data = data_ts_scale)
 
 summary(ts3)
+anova(ts3)
+checkresiduals(ts3)
 
 ts4 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
-            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
-            + m_cost_tv, 
-            data = dados_mes_ts)
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv + m_cost_internet, 
+            data = data_ts_scale)
 
 summary(ts4)
+anova(ts4)
+checkresiduals(ts4)
 
-
-ts5 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data
-            + m_mean_unit_price +m_cost_sms + m_cost_newspapers
+ts5 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
             + m_cost_tv, 
-            data = dados_mes_ts)
+            data = data_ts_scale)
 
 summary(ts5)
+anova(ts5)
+checkresiduals(ts5)
 
-ts6 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data +m_cost_sms
-            + m_cost_newspapers + m_cost_tv, 
-            data = dados_mes_ts)
+ts6 <- tslm(m_demand ~ season + m_CPI + m_sales + m_supply_data
+            + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv, 
+            data = data_ts_scale)
 
 summary(ts6)
+anova(ts6)
+checkresiduals(ts6)
 
-ts7 <- tslm(m_demand ~ season  + m_CPI + m_supply_data +m_cost_sms
-            + m_cost_newspapers + m_cost_tv, 
-            data = dados_mes_ts)
+
+
+ts7 <- tslm(m_demand ~ season + m_CPI + m_sales + m_supply_data
+           +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv, 
+            data = data_ts_scale)
 
 summary(ts7)
+anova(ts7)
+checkresiduals(ts7)
 
+ts8 <- tslm(m_demand ~ season + m_CPI + m_supply_data
+            +m_cost_sms + m_cost_newspapers 
+            + m_cost_tv, 
+            data = data_ts_scale)
 
-imcdiag(ts7, "VIF")
+summary(ts8)
+anova(ts8)
+checkresiduals(ts8)
 
 ```
 
-Fazer análise de resídios
 
 
 
@@ -628,18 +663,25 @@ AIC(fit4)
 
 sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)  ####  
 
+```
 
-##### PREDIÇÃO[
 
+
+
+
+### PREDIÇÃO
+
+
+```{r}
 sarima.for(data_new_escala$m_demand,
            xreg = cov, 
-           newxreg = cov[20:50,], 5,
+           newxreg = cov[70:80,], 5,
            3,0,2)
 
 
 # predict(fit3,newxreg = cov[1:2], h=4)
 
-
-
-
 ```
+
+
+REalizar predição do modelo, ainda não tenho certeza se esse é o mais confiável
