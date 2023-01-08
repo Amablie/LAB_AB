@@ -25,5 +25,7 @@ dim(MMM_data)
 ### https://blogs.rstudio.com/ai/posts/2017-12-20-time-series-forecasting-with-recurrent-neural-networks/
 ### Se a resposta for sim, devemos transformar os dados novamente dividindo por 10000 e tirando as colunas não númericas
 
+###############################################################################
+
 
 

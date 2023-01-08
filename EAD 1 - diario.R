@@ -83,8 +83,8 @@ ggplot(MMM_data, aes(x = DATE, y = Unit_Price)) +
 
 
 ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+  geom_line()
+
 
 ggplot(MMM_data, aes(x = Unit_Price, y  = DEMAND))+
   geom_point()

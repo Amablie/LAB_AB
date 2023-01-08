@@ -1,6 +1,8 @@
 ---
 title: "Time Series Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 
@@ -270,8 +272,8 @@ plot(dadossazonais)
 ##### VERIFICAR PARA OUTRAS VARIÁVEIS ################################
 
 
-
-dados_mes_ts<-ts(dados_mes$m_cost_sms, frequency=12, start=c(2010,1))
+#####   trocar variavel para verificar decomposição
+dados_mes_ts<-ts(dados_mes$m_cost_internet, frequency=12, start=c(2010,1))
 str(dados_mes_ts)
 head(dados_mes_ts)
 
@@ -287,6 +289,7 @@ plot(sazidata)
 ## **TSLM**
 
 ##### ANÁLISE DE REGRESSÃO MULTIPLA
+
 ```{r}
 
 
@@ -452,6 +455,8 @@ checkresiduals(ts8)
 ### **ANALISE DE SERIES TEMPORAIS PARA DEMANDA**
 
 ```{r}
+
+
 data_new_escala <-
   dados_mensais %>% 
   transform(m_demand = m_demand/1000,
@@ -485,6 +490,14 @@ str(data_ts_scale)
 
 ############################## ARIMA PARA DEMANDA ####################################################
 
+
+```
+
+
+
+
+```{r}
+
 ##### ANALISE DE TENDENCIA
 
 ts_demanda<-ts(data_new_escala$m_demand, frequency=12, start=c(2010,1))
@@ -495,9 +508,12 @@ dadossazonais<- decompose(ts_demanda)
 plot(dadossazonais)
 
 
+```
 
 
-######################## MÉDIAS MÓVEIS #########################################
+```{r}
+
+############## MÉDIAS MÓVEIS #########################################
 
 autoplot(ts(data_new_escala$m_demand)) +
   autolayer(ma(data_new_escala$m_demand,7), series="5-MA") +
@@ -505,7 +521,7 @@ autoplot(ts(data_new_escala$m_demand)) +
   scale_colour_manual(values=c("Data"="grey50","5-MA"="red"),
                       breaks=c("Data","5-MA"))
 
-################### AUTOCORRELAÇÃO #########################
+########### AUTOCORRELAÇÃO #########################
 
 acf(data_new_escala$m_demand)
 acf2(data_new_escala$m_demand)
@@ -519,6 +535,11 @@ summary(fit)
 ###lag 1 para autoregressão
 
 #################
+```
+Problema com a diferença, transformar os dados diff() para os dados ficarem estacionários
+
+
+```{r}
 
 ## retifica??o e diferen?a
 par(mfrow=c(2,1), mar=c(3,3,1,1), mgp=c(1.6,.6,0))
@@ -540,8 +561,8 @@ acf2(diff(data_new_escala$m_demand))
 #########
 
 sarima(data_new_escala$m_demand,0,1,0)
-sarima(data_new_escala$m_demand,0,1,1)
-
+sarima(data_new_escala$m_demand,0,1,1) #### melhor modelo
+sarima(data_new_escala$m_demand,1,1,0)
 
 auto.arima(data_new_escala$m_demand)
 
@@ -550,7 +571,7 @@ auto.arima(data_new_escala$m_demand)
 
 
 
-
+"Como você sabe, o ACF está relacionado à parte MA e o PACF à parte AR, portanto, como no pacf temos uma barra que excede muito o intervalo de confiança, estamos confiantes de que nossos dados têm raiz unitária e podemos nos livrar dela diferenciando os dados por um. Em termos ARIMA, os dados devem ser integrados por 1 (d=1), e esta é a parte I de arima. Além disso, como não temos decaimento de barras no PACF, o modelo não teria nenhum lag incluído na parte AR. Considerando que, no gráfico ACF, todas as barras estão muito longe do intervalo de confiança, o modelo teria muitos atrasos da parte MA."
 
 
 
@@ -628,8 +649,9 @@ autoplot(ts(data_new_escala$m_cost_radio)) +
 #### A estacionaridade tem que ficar na linha do zero, com o acrescimo da média
 #### móvel em midia, podemos suavizar a linha e aproximar de zero
 #########################################################
+```
 
-
+```{r}
 
 fit1<- arima(data_new_escala$m_demand, xreg = cov, order = c(1,0,1))
 
@@ -665,6 +687,7 @@ sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)  ####
 
 ```
 
+Como o valor p é muito maior que o nível de significância de 5%, não rejeitamos a hipótese nula de que os erros não são autocorrelacionados. No entanto, observando o gráfico ACF, temos algumas barras que saem do intervalo de confiança, mas isso pode ser esperado pelo nível de significância de 5% (como falso positivo). Assim podemos confirmar a não correlação com 95% de confiança.
 
 
 
@@ -685,3 +708,21 @@ sarima.for(data_new_escala$m_demand,
 
 
 REalizar predição do modelo, ainda não tenho certeza se esse é o mais confiável
+
+
+ Mas antes disso vamos apresentar as últimas 100 observações para serem usadas como dados de teste para comparar a qualidade deste modelo e o modelo RNN.
+ 
+ 
+ 
+ 
+ 
+#### RNN
+
+```{r}
+library(neuralnet)
+library(keras) # for deep learning
+library(tidyverse) # general utility functions
+library(caret)
+library(readxl)
+```
+

@@ -39,11 +39,17 @@ rm1 <- lm(m_demand ~ m_PPI + m_CCI + m_CPI + m_sales + m_supply_data + m_mean_un
 
 summary(rm1)
 
+par(mfrow = c(2,2))
+plot(rm1, which = c(1:4), pch = 20)
+
 rm2 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
             m_cost_sms +  m_cost_newspapers + m_cost_radio + m_cost_tv + m_cost_internet,
           data = dados_mes)
 
 summary(rm2)
+
+par(mfrow = c(2,2))
+plot(rm2, which = c(1:4), pch = 20)
 
 
 rm3 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
@@ -52,11 +58,17 @@ rm3 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price
 
 summary(rm3)
 
+par(mfrow = c(2,2))
+plot(rm3, which = c(1:4), pch = 20)
+
 rm4 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + m_mean_unit_price + 
             m_cost_sms +  m_cost_newspapers + m_cost_tv,
           data = dados_mes)
 
 summary(rm4)
+
+par(mfrow = c(2,2))
+plot(rm4, which = c(1:4), pch = 20)
 
 rm5 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data + 
             m_cost_sms +  m_cost_newspapers + m_cost_tv,
@@ -64,12 +76,17 @@ rm5 <- lm(m_demand ~ m_CCI + m_CPI + m_sales + m_supply_data +
 
 summary(rm5)
 
+par(mfrow = c(2,2))
+plot(rm5, which = c(1:4), pch = 20)
+
 rm6 <- lm(m_demand ~ m_CPI +m_supply_data + 
             m_cost_sms +  m_cost_newspapers + m_cost_tv,
           data = dados_mes)
 
 summary(rm6)
 
+par(mfrow = c(2,2))
+plot(rm5, which = c(1:4), pch = 20)
 
 #install.packages("mctest")
 #install.packages("lmtest")
@@ -176,7 +193,7 @@ ts1 <- tslm(m_demand ~ season + m_PPI + m_CCI + m_CPI + m_sales + m_supply_data
 
 summary(ts1)
 
-
+checkresiduals(ts1)
 
 
 ts2 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
@@ -186,6 +203,7 @@ ts2 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
 
 summary(ts2)
 
+checkresiduals(ts2)
 
 ts3 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers
@@ -194,6 +212,8 @@ ts3 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
 
 summary(ts3)
 
+checkresiduals(ts3)
+
 ts4 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers
             + m_cost_tv, 
@@ -201,6 +221,7 @@ ts4 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
 
 summary(ts4)
 
+checkresiduals(ts4)
 
 ts5 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers
@@ -209,11 +230,15 @@ ts5 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data
 
 summary(ts5)
 
+checkresiduals(ts5)
+
 ts6 <- tslm(m_demand ~ season  + m_CPI + m_sales + m_supply_data +m_cost_sms
             + m_cost_newspapers + m_cost_tv, 
             data = dados_mes_ts)
 
 summary(ts6)
+
+checkresiduals(ts6)
 
 ts7 <- tslm(m_demand ~ season  + m_CPI + m_supply_data +m_cost_sms
             + m_cost_newspapers + m_cost_tv, 
@@ -221,7 +246,7 @@ ts7 <- tslm(m_demand ~ season  + m_CPI + m_supply_data +m_cost_sms
 
 summary(ts7)
 
-
+checkresiduals(ts7)
 
 #### Aqui podemos ver que com o acrescimo da sazonalidade o ajuste por 
 #### series temporais apresenta uma melhora comparado ao modelo por regressão multipla
@@ -326,6 +351,8 @@ ts1 <- tslm(m_demand ~ season + trend + m_PPI + m_CCI + m_CPI + m_sales + m_supp
             data = data_ts_scale)
 
 summary(ts1)
+anova(ts1)
+checkresiduals(ts1)
 
 ts2 <- tslm(m_demand ~ season + trend + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
@@ -333,6 +360,8 @@ ts2 <- tslm(m_demand ~ season + trend + m_CCI + m_CPI + m_sales + m_supply_data
             data = data_ts_scale)
 
 summary(ts2)
+anova(ts2)
+checkresiduals(ts2)
 
 ts3 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
@@ -340,6 +369,8 @@ ts3 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
             data = data_ts_scale)
 
 summary(ts3)
+anova(ts3)
+checkresiduals(ts3)
 
 ts4 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
@@ -347,6 +378,8 @@ ts4 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
             data = data_ts_scale)
 
 summary(ts4)
+anova(ts4)
+checkresiduals(ts4)
 
 ts5 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
@@ -354,7 +387,8 @@ ts5 <- tslm(m_demand ~ season + m_CCI + m_CPI + m_sales + m_supply_data
             data = data_ts_scale)
 
 summary(ts5)
-
+anova(ts5)
+checkresiduals(ts5)
 
 ts6 <- tslm(m_demand ~ season + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers 
@@ -362,6 +396,10 @@ ts6 <- tslm(m_demand ~ season + m_CPI + m_sales + m_supply_data
             data = data_ts_scale)
 
 summary(ts6)
+anova(ts6)
+checkresiduals(ts6)
+
+
 
 ts7 <- tslm(m_demand ~ season + m_CPI + m_sales + m_supply_data
            +m_cost_sms + m_cost_newspapers 
@@ -369,6 +407,8 @@ ts7 <- tslm(m_demand ~ season + m_CPI + m_sales + m_supply_data
             data = data_ts_scale)
 
 summary(ts7)
+anova(ts7)
+checkresiduals(ts7)
 
 ts8 <- tslm(m_demand ~ season + m_CPI + m_supply_data
             +m_cost_sms + m_cost_newspapers 
@@ -376,21 +416,10 @@ ts8 <- tslm(m_demand ~ season + m_CPI + m_supply_data
             data = data_ts_scale)
 
 summary(ts8)
-
+anova(ts8)
+checkresiduals(ts8)
 
 acf2(data_new_escala$m_demand)
 
 
 
-#######################  PROXIMOS PASSOS ################################
-
-############### 1. ANÁLISE DE RESÍDUOS
-############### 2. ANÁLISE DE SELEÇÃO DOS MODELOS
-
-anova(ts1)
-
-
-
-###################################################################################
-############### 3. ANÁLISE SEGUINDO O MODELO ARIMA ###############################
- #### feito
