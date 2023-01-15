@@ -68,3 +68,4 @@ rms1<- lm(weekly_demand ~ weekly_cost_
 #              y = Cost_SMS))+
 #   geom_line() +
 #   facet_wrap(~ year)
+

@@ -20,18 +20,18 @@ summary(dados_mensais)
 
 data_new_escala <-
   dados_mensais %>% 
-  transform(m_demand = m_demand/1000,
-            m_supply_data  = m_supply_data/1000,
+  transform(m_demand = m_demand/10000,
+            m_supply_data  = m_supply_data/10000,
             m_mean_unit_price = m_mean_unit_price/1000,
-            m_sales = m_sales/1000,
-            m_cost_sms = m_cost_sms/1000,
-            m_cost_newspapers = m_cost_newspapers/1000,
-            m_cost_radio = m_cost_radio/1000,
-            m_cost_tv  = m_cost_tv/1000,
-            m_cost_internet  = m_cost_internet/1000,
-            m_CPI = m_CPI/1000,
-            m_CCI  = m_CCI/1000,
-            m_PPI  = m_PPI/1000)
+            m_sales = m_sales/10000,
+            m_cost_sms = m_cost_sms/10000,
+            m_cost_newspapers = m_cost_newspapers/10000,
+            m_cost_radio = m_cost_radio/10000,
+            m_cost_tv  = m_cost_tv/10000,
+            m_cost_internet  = m_cost_internet/10000,
+            m_CPI = m_CPI/10000,
+            m_CCI  = m_CCI/10000,
+            m_PPI  = m_PPI/10000)
 
 
 str(data_new_escala)
@@ -119,6 +119,8 @@ auto.arima(data_new_escala$m_demand)
 #                        MODELO ARIMA COM AS COVARIAVEIS 
 
 #############################################################################################
+
+
 
 macrocov <- data_new_escala[, c(3:5,11:13)]
 midiacov <- data_new_escala[, c(6:10)]

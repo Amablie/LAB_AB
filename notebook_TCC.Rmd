@@ -20,6 +20,10 @@ library(ggfortify)
 library(tidyverse)
 library(zoo)
 library(magrittr)
+library(GGally)
+library(tsibble) # para trabalhar com séries temporais
+library(corrplot)
+library(gridExtra)
 ```
 
 
@@ -54,6 +58,8 @@ summary(MMM_data)
 
 
 ```{r}
+
+MMM_nonnumeric <- MMM_data[,-c(1,2)] ### apenas valores númericos
 tb <- MMM_nonnumeric %>% 
   gather(key = "variable", value = "value", -DEMAND)
 
@@ -67,7 +73,10 @@ ggplot(tb,
 
 
 ```{r}
-ggcorr(MMM_nonnumeric)
+
+MMM_cost <- MMM_data[, -c(1,4,5,6,15,16,17,18,19)] # sem os dados de GRP
+ggpairs(MMM_cost)
+
 ```
 
 
@@ -75,15 +84,16 @@ ggcorr(MMM_nonnumeric)
 ```{r}
 ## RESPOSTA ------------------------------------------
 
-ggplot(MMM_data, aes(x = DATE, y = SALES)) +
+Sales <- ggplot(MMM_data, aes(x = DATE, y = SALES)) +
   geom_line()
-ggplot(MMM_data, aes(x = DATE, y = Supply_Data)) +
+supply <- ggplot(MMM_data, aes(x = DATE, y = Supply_Data)) +
   geom_line()
-ggplot(MMM_data, aes(x = DATE, y = Unit_Price)) +
+unit <- ggplot(MMM_data, aes(x = DATE, y = Unit_Price)) +
   geom_line()
-ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+demand <- ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
+  geom_line()
+
+grid.arrange(Sales, supply, unit, demand,  nrow = 4)
 
 ```
 
@@ -94,14 +104,17 @@ Escolhemos demanda como nossa variável resposta
 
 ## MACROECONOMICA -----------------------------------
 
-ggplot(MMM_data, aes(x = DATE, y = PPI)) +
+PPI <-ggplot(MMM_data, aes(x = DATE, y = PPI)) +
   geom_line()
 
-ggplot(MMM_data, aes(x = DATE, y = CCI)) +
+CCI <- ggplot(MMM_data, aes(x = DATE, y = CCI)) +
   geom_line()
 
-ggplot(MMM_data, aes(x = DATE, y = CPI)) +
+CPI <- ggplot(MMM_data, aes(x = DATE, y = CPI)) +
   geom_line()
+
+grid.arrange(PPI, CCI, CPI,  nrow = 3)
+
 
 ```
 
@@ -110,6 +123,37 @@ Como é possível observar as varipaveis estão com agregações diferentes, as 
 Optamos em transformar a base para o formato **mês** devido ao comportamente mensal das variaveis macroeconomicas observadas,combinado a ideia de que a série traz muitos ruídos em suas variaveis, talvez a agregação pudesse ajudar a suavizar o comportamento das outras variáveis e reduzir o ruído.
 
 ```{r}
+only_data2<-data_cyn2[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,20)]
+
+teste<-only_data %>%
+  group_by(indice_semana) %>%
+  summarise(weekly_demand = sum(DEMAND),
+            weekly_mean_unit_price=mean(Unit_Price),
+            weekly_supply_data=sum(Supply_Data),
+            weekly_sales=sum(SALES),
+            weekly_cost_sms=sum(Cost_SMS),
+            weekly_cost_newspapers=sum(Cost_Newspaper),
+            weekly_cost_radio=sum(Cost_Radio),
+            weekly_cost_tv=sum(Cost_TV))
+
+
+teste2<-only_data2 %>%
+  group_by(anomes) %>%
+  summarise(m_demand = sum(DEMAND),
+            m_mean_unit_price=mean(Unit_Price),
+            m_supply_data=sum(Supply_Data),
+            m_sales=sum(SALES),
+            m_cost_sms=sum(Cost_SMS),
+            m_cost_newspapers=sum(Cost_Newspaper),
+            m_cost_radio=sum(Cost_Radio),
+            m_cost_tv=sum(Cost_TV),
+            m_cost_internet = sum(Cost_Internet),
+            m_CPI=mean(CPI),
+            m_CCI=mean(CCI),
+            m_PPI=mean(PPI))
+
+
+
 dia <- ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
   geom_line()
 semana <- ggplot(teste, aes(x = indice_semana, y = weekly_demand)) +
@@ -369,9 +413,59 @@ Possui problemas de multicolinearidade.
 
 Fico meio em duvida sobre a qualidade dos dados selecionados para a análise.
 
+
+
+
+
+```{r}
+
+
+data_new_escala <-
+  dados_mes %>% 
+  transform(m_demand = m_demand/1000,
+            m_supply_data  = m_supply_data/1000,
+            m_mean_unit_price = m_mean_unit_price/1000,
+            m_sales = m_sales/1000,
+            m_cost_sms = m_cost_sms/1000,
+            m_cost_newspapers = m_cost_newspapers/1000,
+            m_cost_radio = m_cost_radio/1000,
+            m_cost_tv  = m_cost_tv/1000,
+            m_cost_internet  = m_cost_internet/1000,
+            m_CPI = m_CPI/1000,
+            m_CCI  = m_CCI/1000,
+            m_PPI  = m_PPI/1000)
+
+
+str(data_new_escala)
+
+
+summary(data_new_escala)
+
+
+str(data_new_escala)
+summary(data_new_escala)
+
+
+data_ts_scale<-ts(data_new_escala, frequency=12, start=c(2010,1))
+str(data_ts_scale)
+head(data_ts_scale)
+str(data_ts_scale)
+
+############################## ARIMA PARA DEMANDA ####################################################
+
+
+```
+
+
+
+
+
+
+
 ##### COM TSLM
 
 ```{r}
+
 
 ts1 <- tslm(m_demand ~ season + trend + m_PPI + m_CCI + m_CPI + m_sales + m_supply_data
             + m_mean_unit_price +m_cost_sms + m_cost_newspapers + m_cost_radio 
@@ -454,44 +548,7 @@ checkresiduals(ts8)
 
 ### **ANALISE DE SERIES TEMPORAIS PARA DEMANDA**
 
-```{r}
 
-
-data_new_escala <-
-  dados_mensais %>% 
-  transform(m_demand = m_demand/1000,
-            m_supply_data  = m_supply_data/1000,
-            m_mean_unit_price = m_mean_unit_price/1000,
-            m_sales = m_sales/1000,
-            m_cost_sms = m_cost_sms/1000,
-            m_cost_newspapers = m_cost_newspapers/1000,
-            m_cost_radio = m_cost_radio/1000,
-            m_cost_tv  = m_cost_tv/1000,
-            m_cost_internet  = m_cost_internet/1000,
-            m_CPI = m_CPI/1000,
-            m_CCI  = m_CCI/1000,
-            m_PPI  = m_PPI/1000)
-
-
-str(data_new_escala)
-
-
-summary(data_new_escala)
-
-
-str(data_new_escala)
-summary(data_new_escala)
-
-
-data_ts_scale<-ts(data_new_escala, frequency=12, start=c(2010,1))
-str(data_ts_scale)
-head(data_ts_scale)
-str(data_ts_scale)
-
-############################## ARIMA PARA DEMANDA ####################################################
-
-
-```
 
 
 
@@ -582,12 +639,30 @@ auto.arima(data_new_escala$m_demand)
 
 ```{r}
 
-macrocov <- data_new_escala[, c(3:5,11:13)]
-midiacov <- data_new_escala[, c(6:10)]
+
+dim(data_new_escala)
+str(data_new_escala)
+num_data <- data_new_escala[,c(-1,-16,-17)]
+str(num_data)
+
+
+train <-  num_data[1:78, ]
+test <- num_data[-c(1:78), ]
+
+
+
+
+dim(train)
+dim(test)
+
+
+str(train)
 # head(midiacov)
+head(train)
 
 
-head(data_new_escala)
+
+head(test)
 # par(mfrow = c(3,1))
 # plot(y=macrocov$m_CPI, x=data_new_escala$data, type = "l")
 # plot(y=macrocov$m_PPI, x=data_new_escala$data, type = "l")
@@ -595,26 +670,27 @@ head(data_new_escala)
 # dev.off()
 
 
-cov <- data_new_escala[,c(3:13)]
-str(cov)
-cov<-as.matrix(cov) 
-
-### precisa transformar em matriz antes de colocar no modelo
+macrocov <- train[, c(10:12)]
+vendacov <- train[, c(2:4)]
+midiacov <- train[, c(5:9)]
 
 autoplot(ts(midiacov))
-
+autoplot(ts(vendacov))
 autoplot(ts(macrocov))
-
 plot.ts(midiacov)
+
 ###### Aqui podemos ver que as varivaeis de custo são estacionárias e apresentam
 ##### comportamento ciclico, quanto as macroeconomicas e de vendas possue
 ##### tendencia e sazonalidade, logo são não estacionárias
 
 
+cov <- train[,c(2:12)]
+str(cov)
+cov<-as.matrix(cov) ### precisa transformar em matriz antes de colocar no modelo
 
 
 ######## DECOMPOSIÇÃO DAS VARIAVEIS DE MIDIA ########################
-ts_cost<-ts(data_new_escala$m_cost_tv, frequency=12, start=c(2010,1))
+ts_cost<-ts(train$m_cost_tv, frequency=12, start=c(2010,1))
 str(ts_cost)
 head(ts_cost)
 
@@ -623,11 +699,8 @@ plot(dsazonais)
 
 ######################################################################
 
-
-
-
-arima(data_new_escala$m_demand, xreg = cov, order = c(0,1,1))
-sarima(data_new_escala$m_demand, xreg = cov, 0,1,1)
+arima(train$m_demand, xreg = cov, order = c(0,1,1))
+sarima(train$m_demand, xreg = cov, 0,1,1)
 
 #### fazemos a verificação com os argumentos do modelo apenas para demanda
 #### Apesar de ter funcionado para a demanda não é um bom modelo para as
@@ -639,7 +712,7 @@ sarima(data_new_escala$m_demand, xreg = cov, 0,1,1)
 ##### ANALISANDO MÉDIA MÓVEL ###########
 
 autoplot(ts(data_new_escala$m_cost_radio)) +
-  autolayer(ma(data_new_escala$m_CPI,2), series="5-MA") +
+  autolayer(ma(data_new_escala$m_cost_radio,2), series="5-MA") +
   xlab("Year") + ylab("Demand") +
   scale_colour_manual(values=c("Data"="grey50","5-MA"="red"),
                       breaks=c("Data","5-MA"))
@@ -649,71 +722,68 @@ autoplot(ts(data_new_escala$m_cost_radio)) +
 #### A estacionaridade tem que ficar na linha do zero, com o acrescimo da média
 #### móvel em midia, podemos suavizar a linha e aproximar de zero
 #########################################################
-```
 
-```{r}
 
-fit1<- arima(data_new_escala$m_demand, xreg = cov, order = c(1,0,1))
+
+fit1<- arima(train$m_demand, xreg = cov, order = c(1,0,1))
 
 checkresiduals(fit1)
 
-sarima(data_new_escala$m_demand, xreg = cov, 1,0,1)
+sarima(train$m_demand, xreg = cov, 1,0,1)
 
-fit2 <- arima(data_new_escala$m_demand, xreg = cov, order = c(2,0,2))
+fit2 <- arima(train$m_demand, xreg = cov, order = c(2,0,2))
 
 checkresiduals(fit2)
 
-sarima(data_new_escala$m_demand, xreg = cov, 2,0,2)
+sarima(train$m_demand, xreg = cov, 2,0,2)
 
 
-fit3 <- arima(data_new_escala$m_demand, xreg = cov, order = c(3,0,2))
+fit3 <- arima(train$m_demand, xreg = cov, order = c(3,0,2))
 
 checkresiduals(fit3)
 
-sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)
+sarima(train$m_demand, xreg = cov, 3,0,2)
 
-fit4 <- arima(data_new_escala$m_demand, xreg = cov, order = c(4,0,2))
+fit4 <- arima(train$m_demand, xreg = cov, order = c(4,0,2))
 
 checkresiduals(fit4)
 #### entender a saída
-sarima(data_new_escala$m_demand, xreg = cov, 4,0,2)
+sarima(train$m_demand, xreg = cov, 4,0,2)
 #### ENTENDER A SAÍDA DO SARIMA
+
 
 AIC(fit3)  #### melhor modelo ajustado
 AIC(fit4)
 
 
-sarima(data_new_escala$m_demand, xreg = cov, 3,0,2)  ####  
+sarima(train$m_demand, xreg = cov, 3,0,2)  ####  
+
+
+##### PREDIÇÃO
+
+cov_test <- test[,c(2:12)]
+str(cov_test)
+cov_test<-as.matrix(cov_test)
+
+
+dev.off()
+sarima.for(train$m_demand,
+           xreg = cov, 
+           newxreg = cov_test[c(1:8),], 8,
+           3,0,2)
+
+
+ggplot(test, aes(x = data , y = m_demand)) +
+  geom_line()
 
 ```
+
+
 
 Como o valor p é muito maior que o nível de significância de 5%, não rejeitamos a hipótese nula de que os erros não são autocorrelacionados. No entanto, observando o gráfico ACF, temos algumas barras que saem do intervalo de confiança, mas isso pode ser esperado pelo nível de significância de 5% (como falso positivo). Assim podemos confirmar a não correlação com 95% de confiança.
 
 
 
-
-### PREDIÇÃO
-
-
-```{r}
-sarima.for(data_new_escala$m_demand,
-           xreg = cov, 
-           newxreg = cov[70:80,], 5,
-           3,0,2)
-
-
-# predict(fit3,newxreg = cov[1:2], h=4)
-
-```
-
-
-REalizar predição do modelo, ainda não tenho certeza se esse é o mais confiável
-
-
- Mas antes disso vamos apresentar as últimas 100 observações para serem usadas como dados de teste para comparar a qualidade deste modelo e o modelo RNN.
- 
- 
- 
  
  
 #### RNN

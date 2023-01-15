@@ -9,9 +9,12 @@ str(data_new_escala)
 num_data <- data_new_escala[,c(-1,-16,-17)]
 str(num_data)
 
-indice_treino <- createDataPartition(y = num_data$m_demand,p = 0.9, list = F)
-train <-  num_data[indice_treino, ]
-test <- num_data[-indice_treino, ]
+
+train <-  num_data[1:78, ]
+test <- num_data[-c(1:78), ]
+
+
+
 
 dim(train)
 dim(test)
@@ -19,9 +22,11 @@ dim(test)
 
 str(train)
 # head(midiacov)
-
-
 head(train)
+
+
+
+head(test)
 # par(mfrow = c(3,1))
 # plot(y=macrocov$m_CPI, x=data_new_escala$data, type = "l")
 # plot(y=macrocov$m_PPI, x=data_new_escala$data, type = "l")
@@ -125,9 +130,12 @@ str(cov_test)
 cov_test<-as.matrix(cov_test)
 
 
-
+dev.off()
 sarima.for(train$m_demand,
            xreg = cov, 
-           newxreg = cov_test, 8,
+           newxreg = cov_test[c(1:8),], 8,
            3,0,2)
 
+
+ggplot(test, aes(x = data , y = m_demand)) +
+  geom_line()

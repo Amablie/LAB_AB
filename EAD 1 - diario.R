@@ -47,7 +47,7 @@ pairs(MMM_nonnumeric)
 ggcorr(MMM_nonnumeric)
 corrplot(MMM_nonnumeric)
 
-ggpairs(MMM_cost)
+ggpairs(MMM_nonnumeric)
 
 tb <- MMM_nonnumeric %>% 
   gather(key = "variable", value = "value", -DEMAND)
