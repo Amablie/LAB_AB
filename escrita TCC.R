@@ -91,11 +91,11 @@ grid.arrange(PPI, CCI, CPI,  nrow = 3)
 
 dia <- ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
   geom_line()
-semana <- ggplot(teste, aes(x = indice_semana, y = weekly_demand)) +
-  geom_line()
+# semana <- ggplot(teste, aes(x = indice_semana, y = weekly_demand)) +
+#   geom_line()
 mes <- ggplot(dados_mensais, aes(x = data, y = m_demand)) +
   geom_line()
-grid.arrange(dia, semana, mes,  nrow = 3)
+grid.arrange(dia, mes,  nrow = 2)
 
 
 # Aqui podemos ver o efeito da agregação diante da variável resposta escolhida para a modelagem
@@ -126,3 +126,40 @@ grid.arrange(mes_SMS, mes_TV, mes_NEWS, mes_RADIO, mes_INTERNET,  nrow = 5)
 # Analisando os dados de investimento nos canais de midia da empresa em questão, notamos um 
 # comportamente semelhante ao de ruído branco na nossa base de dados, chamando nossa atenção
 # para como são feitas as distribuições de custo ao longo dos anos para essa empresa.
+
+# Olhando para a série temporal vemos um comportamento mais estacionário quando olhando para 
+# os dados de custo
+
+
+
+# ACF E CCF ---------------------------------------------------------------
+
+# ACF ---
+
+# custo
+acf2(dados_mes$m_cost_sms)
+acf2(dados_mes$m_cost_tv) 
+acf2(dados_mes$m_cost_newspapers)
+acf2(dados_mes$m_cost_radio)
+acf2(dados_mes$m_cost_internet)
+# venda
+acf2(dados_mes$m_demand)
+acf2(dados_mes$m_sales)
+acf2(dados_mes$m_supply_data)
+# macroeconomica
+acf2(dados_mes$m_PPI)
+acf2(dados_mes$m_CCI)
+acf2(dados_mes$m_CPI)
+
+
+
+
+
+# CCF ---
+
+ccf2(dados_mes$m_CPI, dados_mes$m_demand)
+ccf2(dados_mes$m_supply_data, dados_mes$m_demand)
+ccf2(dados_mes$m_cost_sms, dados_mes$m_demand)
+ccf2(dados_mes$m_cost_newspapers, dados_mes$m_demand)
+ccf2(dados_mes$m_cost_tv, dados_mes$m_demand)
+
