@@ -156,6 +156,14 @@ acf2(dados_mes$m_cost_newspapers)
 acf2(dados_mes$m_cost_radio)
 acf2(dados_mes$m_cost_internet)
 
+## diferença
+acf2(diff(dados_mes$m_cost_sms))
+acf2(diff(dados_mes$m_cost_newspapers)) # lag 2
+acf2(diff(dados_mes$m_cost_radio)) # lag 3
+acf2(diff(dados_mes$m_cost_internet)) # lag 3
+acf2(diff(dados_mes$m_cost_tv)) # lag 3
+
+
 # Fazendo a analise da autocorrelação podemos ver um comportamento sazonal nos dados
 # quando analisamos o grafico ACF no lag 4
 
@@ -190,7 +198,12 @@ acf2(diff(dados_mes$m_CPI)) # lag 3
 # Olhando os dados, podemos ver que talvez seja necessário realizar uma diferança para tornar
 # os dados estacionários
 
-
+# custo
+acf2(dados_mes$m_cost_sms)
+acf2(dados_mes$m_cost_newspapers)
+acf2(dados_mes$m_cost_radio)
+acf2(dados_mes$m_cost_internet)
+acf2(dados_mes$m_cost_tv)
 
 
 # CCF ---
@@ -287,10 +300,14 @@ auto.arima(data_new_escala$m_demand)
 
 #  ANALISE ARIMA COM COVARIAVEIS ------------------------------------------
 
+
+#### TRANSFORMAR TODOS OS DADOS EM DADOS ESTACIONÁRIOS, UTILIZAR DIFERENÇA
+
 dim(data_new_escala)
 str(data_new_escala)
 num_data <- data_new_escala[,c(-1,-16,-17)]
 str(num_data)
+
 
 ## separação de treino e teste
 train <-  num_data[1:80, ]

@@ -123,36 +123,6 @@ Como é possível observar as varipaveis estão com agregações diferentes, as 
 Optamos em transformar a base para o formato **mês** devido ao comportamente mensal das variaveis macroeconomicas observadas,combinado a ideia de que a série traz muitos ruídos em suas variaveis, talvez a agregação pudesse ajudar a suavizar o comportamento das outras variáveis e reduzir o ruído.
 
 ```{r}
-only_data2<-data_cyn2[,c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,20)]
-
-teste<-only_data %>%
-  group_by(indice_semana) %>%
-  summarise(weekly_demand = sum(DEMAND),
-            weekly_mean_unit_price=mean(Unit_Price),
-            weekly_supply_data=sum(Supply_Data),
-            weekly_sales=sum(SALES),
-            weekly_cost_sms=sum(Cost_SMS),
-            weekly_cost_newspapers=sum(Cost_Newspaper),
-            weekly_cost_radio=sum(Cost_Radio),
-            weekly_cost_tv=sum(Cost_TV))
-
-
-teste2<-only_data2 %>%
-  group_by(anomes) %>%
-  summarise(m_demand = sum(DEMAND),
-            m_mean_unit_price=mean(Unit_Price),
-            m_supply_data=sum(Supply_Data),
-            m_sales=sum(SALES),
-            m_cost_sms=sum(Cost_SMS),
-            m_cost_newspapers=sum(Cost_Newspaper),
-            m_cost_radio=sum(Cost_Radio),
-            m_cost_tv=sum(Cost_TV),
-            m_cost_internet = sum(Cost_Internet),
-            m_CPI=mean(CPI),
-            m_CCI=mean(CCI),
-            m_PPI=mean(PPI))
-
-
 
 dia <- ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
   geom_line()
@@ -164,7 +134,7 @@ grid.arrange(dia, semana, mes,  nrow = 3)
 ```
 
 
-```{r}
+```{r include=FALSE}
 
 str(MMM_data)
 data_cyn<-MMM_data
@@ -221,12 +191,13 @@ base_de_dados<-teste2
 ```{r}
 
 ### MACRO ECONOMICOS
-ggplot(teste2, aes(x =ind_mes, y = m_PPI)) + geom_line()
+ggplot(teste2, aes(x =ind_mes, y = m_PPI)) + 
+  geom_line()
 
 ggplot(teste2, aes(x = ind_mes, y = m_CCI)) +
   geom_line()
 
-ggplot(teste2, aes(x = ind_mes, y = m_PPI)) +
+ggplot(teste2, aes(x = ind_mes, y = m_CPI)) +
   geom_line()
 
 ## VENDAS
@@ -242,14 +213,14 @@ ggplot(teste2, aes(x = ind_mes, y = m_supply_data)) +
 ggplot(teste2, aes(x = ind_mes, y = m_sales)) +
   geom_line()
 ```
-Aqui é visivel como a agregação nos dados reduziu o ruído nos graficos.
+
 
 
 
 ```{r}
 
 ##Investimento em canais
-ggplot(teste2, aes(x = ind_mes, y = m_cost_sms)) +
+ggplot(dados_mensais, aes(x = data, y = m_cost_sms)) +
   geom_line()
 
 ggplot(teste2, aes(x = ind_mes, y = m_cost_tv)) +

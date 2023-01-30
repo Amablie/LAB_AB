@@ -175,7 +175,7 @@ plot(dadossazonais)
 
 
 
-dados_mes_ts<-ts(dados_mes, frequency=12, start=c(2010,1))
+dados_mes_ts<-ts(dados_mes$m_cost_sms, frequency=12, start=c(2010,1))
 str(dados_mes_ts)
 head(dados_mes_ts)
 
