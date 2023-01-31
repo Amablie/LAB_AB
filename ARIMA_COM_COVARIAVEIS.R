@@ -5,43 +5,20 @@ library(caret)
 library(readxl)
 library(fable)
 
-dim(data_new_escala)
-str(data_new_escala)
-num_data <- data_new_escala[,c(-1,-16,-17)]
+dim(dados_mensais)
+str(dados_mensais)
+num_data <- dados_mensais[,c(-1,-16,-17)]
 str(num_data)
 
 
-# macroeconomica
-acf2(dados_mes$m_PPI)
-acf2(dados_mes$m_CCI)
-acf2(dados_mes$m_CPI)
-
-## diferença
-acf2(diff(dados_mes$m_PPI))
-acf2(diff(dados_mes$m_CCI)) # lag 2
-acf2(diff(dados_mes$m_CPI)) # lag 3
-
-# Olhando os dados, podemos ver que talvez seja necessário realizar uma diferança para tornar
-# os dados estacionários
-
-# custo
-acf2(dados_mes$m_cost_sms)
-acf2(dados_mes$m_cost_newspapers)
-acf2(dados_mes$m_cost_radio)
-acf2(dados_mes$m_cost_internet)
-acf2(dados_mes$m_cost_tv)
-
-
-
-
 par(mfrow=c(2,1), mar=c(3,3,1,1), mgp=c(1.6,.6,0))
-plot(data_new_escala$m_CPI,x= data_new_escala$data, xlab="Tempo", ylab="Série do resto", pch=19, col="skyblue3", type = "l")
+plot(dados_mensais$m_CPI,x= dados_mensais$data, xlab="Tempo", ylab="Série do resto", pch=19, col="skyblue3", type = "l")
 grid()
-plot(diff(data_new_escala$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
+plot(diff(dados_mensais$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
 grid()
 
 
-
+####DEIXANDO TODOS OS DADOS ESTACIONÁRIOS
 data_diff <- data.frame(
             m_demand = diff(num_data$m_demand,1),
             m_supply_data  = diff(num_data$m_supply_data,1),
@@ -60,9 +37,13 @@ data_diff <- data.frame(
 str(data_diff)
 str(num_data)
 
+# data_diff<-ts(data_diff, frequency=12, start=c(2010,2))
+# data_diff
 
 plot(data_diff$m_supply_data,x= data_diff$data, xlab="Tempo", ylab="Série do resto", pch=19, col="skyblue3", type = "l")
 grid()
+
+### SEPRAÇÃO DE TREINO E TESTE
 
 train <-  data_diff[1:77, ]
 test <- data_diff[-c(1:77), ]
@@ -100,9 +81,9 @@ plot.ts(midiacov)
 
 
 par(mfrow=c(2,1), mar=c(3,3,1,1), mgp=c(1.6,.6,0))
-plot(data_new_escala$m_demand-fitted(fit),x= data_new_escala$data, xlab="Tempo", ylab="Série do resto", pch=19, col="skyblue3", type = "l")
+plot(dados_mensais$m_demand-fitted(fit),x= dados_mensais$data, xlab="Tempo", ylab="Série do resto", pch=19, col="skyblue3", type = "l")
 grid()
-plot(diff(data_new_escala$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
+plot(diff(dados_mensais$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
 grid()
 
 
@@ -175,23 +156,16 @@ checkresiduals(fit5)
 sarima(train$m_demand, xreg = cov, 3,0,3)
 
 fit6<- arima(train$m_demand, xreg = cov, order = c(3,0,0))
-checkresiduals(fit5)
+checkresiduals(fit6)
 sarima(train$m_demand, xreg = cov, 3,0,0)
 
-AIC(fit3)  #### melhor modelo ajustado
-AIC(fit4)
-AIC(fit5)  
-AIC(fit6)
-
-BIC(fit3)  #### melhor modelo ajustado
-BIC(fit4)
-BIC(fit5)  #### melhor modelo ajustado
-BIC(fit6)
-
-sarima(train$m_demand, xreg = cov, 3,0,2)  ####  
+### pela analise de residuos vemos que o modelo que mais se destaca é o fit6, um modelo arima
+### (3,0,0) sendo esse nosso modelo selecionado, porém pelo critério de aic
 
 
-##### PREDIÇÃO
+
+
+##### -------------------- PREDIÇÃO --------------------------------------
 
 cov_test <- test[,c(2:12)]
 str(cov_test)
@@ -199,27 +173,44 @@ cov_test<-as.matrix(cov_test)
 
 
 dev.off()
-sarima.for(train$m_demand,
+pred5 <-sarima.for(train$m_demand,
            xreg = cov, 
-           newxreg = cov_test[c(1:2),], 2,
-           3,0,2)
+           newxreg = cov_test, 8,
+           3,0,3)
 
 
-sarima.for(train$m_demand,
+pred6 <-sarima.for(train$m_demand,
            xreg = cov, 
-           newxreg = cov_test[c(1:2),], 2,
+           newxreg = cov_test, 8,
            3,0,0)
 
-ggplot(test, aes(x = data , y = m_demand)) +
-  geom_line()
 
-auto.arima(train$m_demand, xreg = cov)
-
-
+c(test[1])
+c(pred6$pred)
+c(pred5$pred)
 
 ## -----------------------------------------------------------------------------------
 
 
 
+### desfaz o calculo da diferença
+diffinv(data_diff$m_demand, xi = 209071)
+c(num_data$m_demand)
+
+pred6
+dif_demand<-c(train$m_demand)
+
+dif_pred<-c(9229.096,  31926.453, -11164.673, -14209.466,  44468.313,  -7609.844, -16859.231, -20510.920)
+
+d<-c(dif_demand,dif_pred)
+inversa<-diffinv(d, xi = 209071)
+
+num_data$m_demand[c(1:77)]
 
 
+num_data$m_demand[-c(1:77)]
+data_inversa <-as_data_frame(inversa)
+c(data_inversa[-c(1:77),])
+
+### aqui podemos ver que o mês 78 foi previsto corretamente, os demais meses passam perto porém conforme vai ficando distante
+### as predições se distanciam da exatidão tbm
