@@ -54,7 +54,8 @@ str(MMM_data)
 MMM_nonnumeric <- MMM_data[,-c(1,9)] ### apenas valores númericos
 tb <- MMM_nonnumeric %>% 
   gather(key = "variable", value = "value", -DATE)
-
+options (scipen = 999)
+summary(MMM_data)
 str(tb)
 
 ggplot(tb,
@@ -175,6 +176,7 @@ acf2(diff(dados_mes$m_cost_tv)) # lag 3
 acf2(dados_mes$m_demand)
 acf2(dados_mes$m_sales)
 acf2(dados_mes$m_supply_data)
+acf2(dados_mes$m_mean_unit_price)
 
 ## diferença vendas
 acf2(diff(dados_mes$m_demand))

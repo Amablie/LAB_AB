@@ -4,6 +4,8 @@ library(tidyverse) # general utility functions
 library(caret)
 library(readxl)
 library(fable)
+#install.packages('Metrics')
+library(Metrics)
 
 dim(dados_mensais)
 str(dados_mensais)
@@ -12,7 +14,7 @@ str(num_data)
 
 
 par(mfrow=c(2,1), mar=c(3,3,1,1), mgp=c(1.6,.6,0))
-plot(dados_mensais$m_CPI,x= dados_mensais$data, xlab="Tempo", ylab="Série do resto", pch=19, col="skyblue3", type = "l")
+plot(dados_mensais$m_demand,x= dados_mensais$data, xlab="Tempo", ylab="Série da demanda", pch=19, col="skyblue3", type = "l")
 grid()
 plot(diff(dados_mensais$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
 grid()
@@ -77,6 +79,7 @@ autoplot(ts(vendacov))
 autoplot(ts(macrocov))
 plot.ts(midiacov)
 
+autoplot(ts(train[,c(1:12)]))
 #### TODOS OS DADOS ESTÃO ESTACIONARIOS
 
 
@@ -136,34 +139,46 @@ autoplot(ts(data_new_escala$m_cost_radio)) +
 fit1<- arima(train$m_demand, xreg = cov, order = c(1,0,1))
 checkresiduals(fit1)
 sarima(train$m_demand, xreg = cov, 1,0,1)
+RMSE(fit1$residuals)
+
 
 fit2 <- arima(train$m_demand, xreg = cov, order = c(2,0,1))
 checkresiduals(fit2)
 sarima(train$m_demand, xreg = cov, 2,0,1)
-
+RMSE(fit2$residuals)
 
 fit3 <- arima(train$m_demand, xreg = cov, order = c(3,0,1))
 checkresiduals(fit3)
 sarima(train$m_demand, xreg = cov, 3,0,1)
+RMSE(fit3$residuals)
+
 
 fit4 <- arima(train$m_demand, xreg = cov, order = c(3,0,2))
 checkresiduals(fit4)
 sarima(train$m_demand, xreg = cov, 3,0,2)
-
+RMSE(fit4$residuals)
 
 fit5<- arima(train$m_demand, xreg = cov, order = c(3,0,3))
 checkresiduals(fit5)
+acf(fit5)
 sarima(train$m_demand, xreg = cov, 3,0,3)
+RMSE(fit5$residuals)
 
 fit6<- arima(train$m_demand, xreg = cov, order = c(3,0,0))
 checkresiduals(fit6)
 sarima(train$m_demand, xreg = cov, 3,0,0)
+RMSE(fit6$residuals)
+
 
 ### pela analise de residuos vemos que o modelo que mais se destaca é o fit6, um modelo arima
-### (3,0,0) sendo esse nosso modelo selecionado, porém pelo critério de aic
+### (3,0,0) sendo esse nosso modelo selecionado, porém pelo critério de aic o melhor modelo foi o fit5
 
 
-
+AIC(fit2)
+AIC(fit3)
+AIC(fit4)
+AIC(fit5)
+AIC(fit6)
 
 ##### -------------------- PREDIÇÃO --------------------------------------
 
@@ -181,7 +196,7 @@ pred5 <-sarima.for(train$m_demand,
 
 pred6 <-sarima.for(train$m_demand,
            xreg = cov, 
-           newxreg = cov_test, 8,
+           newxreg = cov_test[1:8,], 8,
            3,0,0)
 
 
@@ -192,7 +207,7 @@ c(pred5$pred)
 ## -----------------------------------------------------------------------------------
 
 
-
+#### PARA O FIT 6
 ### desfaz o calculo da diferença
 diffinv(data_diff$m_demand, xi = 209071)
 c(num_data$m_demand)
@@ -200,17 +215,60 @@ c(num_data$m_demand)
 pred6
 dif_demand<-c(train$m_demand)
 
-dif_pred<-c(9229.096,  31926.453, -11164.673, -14209.466,  44468.313,  -7609.844, -16859.231, -20510.920)
-
-d<-c(dif_demand,dif_pred)
-inversa<-diffinv(d, xi = 209071)
+dif_pred6<-c(9229.096,  31926.453, -11164.673, -14209.466,  44468.313,  -7609.844, -16859.231, -20510.920)
+d<-c(dif_demand,dif_pred6)
+inversa6<-diffinv(d, xi = 209071)
 
 num_data$m_demand[c(1:77)]
 
 
 num_data$m_demand[-c(1:77)]
-data_inversa <-as_data_frame(inversa)
-c(data_inversa[-c(1:77),])
+data_inversa6 <-as_data_frame(inversa6)
+c(data_inversa6[-c(1:77),])
 
-### aqui podemos ver que o mês 78 foi previsto corretamente, os demais meses passam perto porém conforme vai ficando distante
-### as predições se distanciam da exatidão tbm
+pred_real6<-data.frame(predição = c(data_inversa6[-c(1:78),]),
+           dados_reais = c(num_data$m_demand[-c(1:78)])
+           )
+
+
+RMSE(pred_real6$dados_reais, pred_real6$value)
+
+
+
+
+
+
+### PARA O FIT 5 
+
+
+#### PARA O FIT 6
+### desfaz o calculo da diferença
+diffinv(data_diff$m_demand, xi = 209071)
+c(num_data$m_demand)
+
+pred5
+dif_demand<-c(train$m_demand)
+
+dif_pred5<-c(3219.057,  21012.091,  -6177.925,  -7668.715,  37098.048,  -4742.341, -19223.474, -27501.158)
+d<-c(dif_demand,dif_pred5)
+inversa5<-diffinv(d, xi = 209071)
+
+num_data$m_demand[c(1:77)]
+
+
+num_data$m_demand[-c(1:77)]
+data_inversa5<-as_data_frame(inversa5)
+c(data_inversa5[-c(1:77),])
+
+pred_real5<-data.frame(predict = c(data_inversa5[-c(1:78),]),
+                      dados_reais = c(num_data$m_demand[-c(1:78)])
+)
+
+pred_real5
+pred_real6
+
+RMSE(pred_real5$dados_reais, pred_real5$value)
+
+
+rmse(pred_real5$dados_reais, pred_real5$value)
+rmse(pred_real6$dados_reais, pred_real6$value)
