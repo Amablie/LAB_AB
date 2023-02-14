@@ -104,13 +104,17 @@ grid.arrange(PPI, CCI, CPI,  nrow = 3)
 
 
 dia <- ggplot(MMM_data, aes(x = DATE, y = DEMAND)) +
+  xlab("Data")+
+  ylab("Demanda diária")+
   geom_line()
 # semana <- ggplot(teste, aes(x = indice_semana, y = weekly_demand)) +
 #   geom_line()
 mes <- ggplot(dados_mensais, aes(x = data, y = m_demand)) +
+  xlab("Data")+
+  ylab("Demanda mensal")+
   geom_line()
-grid.arrange(dia, mes,  nrow = 2)
-
+grid.arrange(dia, mes,  nrow = 2, top = "Comparação de agregação dos dados")
+?grid.arrange()
 
 # Aqui podemos ver o efeito da agregação diante da variável resposta escolhida para a modelagem
 # no caso a variável Demanda.
@@ -173,15 +177,16 @@ acf2(diff(dados_mes$m_cost_tv)) # lag 3
 
 
 # venda
-acf2(dados_mes$m_demand)
+acf2(dados_mes$m_demand, main = "ACF e PACF para demanda")
 acf2(dados_mes$m_sales)
 acf2(dados_mes$m_supply_data)
 acf2(dados_mes$m_mean_unit_price)
 
 ## diferença vendas
-acf2(diff(dados_mes$m_demand))
+demanddiffacf<-acf2(diff(dados_mes$m_demand))
 acf2(diff(dados_mes$m_sales))
 acf2(diff(dados_mes$m_supply_data))
+
 
 # Olhando os dados, podemos ver que talvez seja necessário realizar uma diferança para tornar
 # os dados estacionários

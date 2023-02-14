@@ -14,7 +14,8 @@ str(num_data)
 
 
 par(mfrow=c(2,1), mar=c(3,3,1,1), mgp=c(1.6,.6,0))
-plot(dados_mensais$m_demand,x= dados_mensais$data, xlab="Tempo", ylab="Série da demanda", pch=19, col="skyblue3", type = "l")
+plot(dados_mensais$m_demand,x= dados_mensais$data, xlab="Tempo", ylab="Série da demanda", pch=19, col="skyblue3", type = "l",
+     main = "Comparação da série temporal original e diferenciada para demanda")
 grid()
 plot(diff(dados_mensais$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
 grid()
@@ -152,7 +153,6 @@ checkresiduals(fit3)
 sarima(train$m_demand, xreg = cov, 3,0,1)
 RMSE(fit3$residuals)
 
-
 fit4 <- arima(train$m_demand, xreg = cov, order = c(3,0,2))
 checkresiduals(fit4)
 sarima(train$m_demand, xreg = cov, 3,0,2)
@@ -160,25 +160,31 @@ RMSE(fit4$residuals)
 
 fit5<- arima(train$m_demand, xreg = cov, order = c(3,0,3))
 checkresiduals(fit5)
-acf(fit5)
 sarima(train$m_demand, xreg = cov, 3,0,3)
 RMSE(fit5$residuals)
+acf2(fit5$residuals)
 
 fit6<- arima(train$m_demand, xreg = cov, order = c(3,0,0))
 checkresiduals(fit6)
 sarima(train$m_demand, xreg = cov, 3,0,0)
 RMSE(fit6$residuals)
 
+fit7<- arima(train$m_demand, xreg = cov, order = c(3,0,4))
+checkresiduals(fit7)
+sarima(train$m_demand, xreg = cov, 3,0,4)
+RMSE(fit7$residuals)
+
 
 ### pela analise de residuos vemos que o modelo que mais se destaca é o fit6, um modelo arima
 ### (3,0,0) sendo esse nosso modelo selecionado, porém pelo critério de aic o melhor modelo foi o fit5
 
-
+AIC(fit1)
 AIC(fit2)
 AIC(fit3)
 AIC(fit4)
 AIC(fit5)
 AIC(fit6)
+AIC(fit7)
 
 ##### -------------------- PREDIÇÃO --------------------------------------
 
@@ -250,8 +256,9 @@ pred5
 dif_demand<-c(train$m_demand)
 
 dif_pred5<-c(3219.057,  21012.091,  -6177.925,  -7668.715,  37098.048,  -4742.341, -19223.474, -27501.158)
-d<-c(dif_demand,dif_pred5)
+d<-c(data_diff$m_demand[c(1:77)], dif_pred5)
 inversa5<-diffinv(d, xi = 209071)
+
 
 num_data$m_demand[c(1:77)]
 
@@ -271,4 +278,30 @@ RMSE(pred_real5$dados_reais, pred_real5$value)
 
 
 rmse(pred_real5$dados_reais, pred_real5$value)
-rmse(pred_real6$dados_reais, pred_real6$value)
+mae(pred_real5$dados_reais, pred_real5$value)
+mape(pred_real5$dados_reais[4], pred_real5$value[4])
+#install.packages('Metrics')
+library(Metrics)
+previsto<-inversa5
+RNN <- c(171353.1, 168123.1, 167969.0, 165288.5, 161884.9, 159054.5, 152365.3, 145833.6)
+prev_RNN <- c(num_data$m_demand[1:78], RNN)
+
+comparativo<-pred_real5
+comparativo
+rmse(pred_real5$dados_reais, pred_real5$value)
+
+
+options (scipen = 999)
+######
+# install.packages('ggfortify')
+# install.packages('zoo')
+library(ggfortify)
+library(zoo)
+ts1 <- inversa5
+ts2 <- num_data$m_demand #dados observados
+ts3 <- prev_RNN
+autoplot(ts( cbind("previsao ARIMA"= ts1, "previsão RNN" = ts3, observado=ts2), start = c(2010,1), frequency = 12),
+         facets = FALSE, 
+         ylab = "Demanda",
+         xlab = "Tempo",
+         main = "Previsão da série temporal para RNN e ARIMA")
