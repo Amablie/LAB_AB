@@ -14,8 +14,7 @@ str(num_data)
 
 
 par(mfrow=c(2,1), mar=c(3,3,1,1), mgp=c(1.6,.6,0))
-plot(dados_mensais$m_demand,x= dados_mensais$data, xlab="Tempo", ylab="Série da demanda", pch=19, col="skyblue3", type = "l",
-     main = "Comparação da série temporal original e diferenciada para demanda")
+plot(dados_mensais$m_demand,x= dados_mensais$data, xlab="Tempo", ylab="Série da demanda", pch=19, col="skyblue3", type = "l")
 grid()
 plot(diff(dados_mensais$m_demand,1), xlab="Tempo", ylab="Série diferenciada", pch=19, col="skyblue3", type = "l")
 grid()
@@ -279,7 +278,11 @@ RMSE(pred_real5$dados_reais, pred_real5$value)
 
 rmse(pred_real5$dados_reais, pred_real5$value)
 mae(pred_real5$dados_reais, pred_real5$value)
-mape(pred_real5$dados_reais[4], pred_real5$value[4])
+mape(pred_real5$dados_reais, pred_real5$value)
+
+
+
+
 #install.packages('Metrics')
 library(Metrics)
 previsto<-inversa5
@@ -300,8 +303,7 @@ library(zoo)
 ts1 <- inversa5
 ts2 <- num_data$m_demand #dados observados
 ts3 <- prev_RNN
-autoplot(ts( cbind("previsao ARIMA"= ts1, "previsão RNN" = ts3, observado=ts2), start = c(2010,1), frequency = 12),
+autoplot(ts( cbind( "predição ARIMA"= ts1,"predição RNN" = ts3, observado=ts2), start = c(2010,1), frequency = 12),
          facets = FALSE, 
          ylab = "Demanda",
-         xlab = "Tempo",
-         main = "Previsão da série temporal para RNN e ARIMA")
+         xlab = "Tempo")

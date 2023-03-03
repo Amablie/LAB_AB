@@ -1,23 +1,23 @@
 #Instalando Pacotes
 
-install.packages('tidyverse')
+#install.packages('tidyverse')
 library(tidyverse)
-install.packages('ludibridate')
+#install.packages('ludibridate')
 library(lubridate)
-install.packages('tsibble')
+#install.packages('tsibble')
 library(tsibble) # Tidy Temporal Data Frames and Tools
-install.packages('feasts')
+#install.packages('feasts')
 library(feasts) # Feature Extraction and Statistics for Time Series
-install.packages('tsibbledata')
+#install.packages('tsibbledata')
 library(tsibbledata) # Diverse Datasets for 'tsibble'
-install.packages('torch')
+install.packages('torch', dependencies = T)
 library(torch)
-install.packages('readxl')
+#install.packages('readxl')
 library(readxl)
 
 
 #Carregando dados
-dados<-read_excel("dados_mensais_imp.xlsx")
+dados<-read_excel("dados_mensais.xlsx")
 str(dados)
 
 
@@ -136,6 +136,7 @@ dataset_dados <- dataset(
   
 )
 
+remove.packages("torch")
 
 ### Criando dataset e dataloaders
 train_ds <- dataset_dados(train, n_timesteps, n_forecast, sample_frac =1)

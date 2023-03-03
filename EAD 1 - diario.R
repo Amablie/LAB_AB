@@ -92,47 +92,59 @@ ggplot(MMM_data, aes(x = Unit_Price, y  = DEMAND))+
 ## MACROECONOMICA -----------------------------------
 
 ggplot(MMM_data, aes(x = DATE, y = PPI)) +
+  xlab("Data")+
   geom_line()
 
 ggplot(MMM_data, aes(x = DATE, y = CCI)) +
+  xlab("Data")+
   geom_line()
 
 ggplot(MMM_data, aes(x = DATE, y = CPI)) +
+  xlab("Data")+
   geom_line()
 
 ## MARKETING ----------------------------------------------
 
-ggplot(MMM_data, aes(x = DATE, y = Cost_Newspaper)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+newspaper <- ggplot(MMM_data, aes(x = DATE, y = Cost_Newspaper)) +
+  ylab("Custo de Jornal")+
+  xlab("Data")+
+  geom_line()
 
-ggplot(MMM_data, aes(x = DATE, y = Cost_SMS)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+sms <- ggplot(MMM_data, aes(x = DATE, y = Cost_SMS)) +
+  ylab("Custo de SMS")+
+  xlab("Data")+
+  geom_line()
 
-ggplot(MMM_data, aes(x = DATE, y = Cost_Radio)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+radio <- ggplot(MMM_data, aes(x = DATE, y = Cost_Radio)) +
+  ylab("Custo de Radio")+
+  xlab("Data")+
+  geom_line()
 
-ggplot(MMM_data, aes(x = DATE, y = Cost_TV)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+tv <- ggplot(MMM_data, aes(x = DATE, y = Cost_TV)) +
+  ylab("Custo de TV")+
+  xlab("Data")+
+  geom_line()
 
-ggplot(MMM_data, aes(x = DATE, y = Cost_Internet)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+internet <- ggplot(MMM_data, aes(x = DATE, y = Cost_Internet)) +
+  ylab("Custo de Internet")+
+  xlab("Data")+
+  geom_line()
+
+
+grid.arrange(tv, radio,sms,newspaper,internet, nrow = 2, ncol=3)
+
+
+
+
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_NewPaper)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+  geom_line()
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_SMS)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+  geom_line()
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_Radio)) +
-  geom_line()+
-  geom_smooth(method = "loess")
+  geom_line()
 
 ggplot(MMM_data, aes(x = DATE, y = GRP_Internet)) +
   geom_line()+

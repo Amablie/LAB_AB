@@ -113,7 +113,7 @@ mes <- ggplot(dados_mensais, aes(x = data, y = m_demand)) +
   xlab("Data")+
   ylab("Demanda mensal")+
   geom_line()
-grid.arrange(dia, mes,  nrow = 2, top = "Comparação de agregação dos dados")
+grid.arrange(dia, mes,  nrow = 2)
 ?grid.arrange()
 
 # Aqui podemos ver o efeito da agregação diante da variável resposta escolhida para a modelagem
@@ -138,7 +138,7 @@ mes_RADIO <- ggplot(dados_mensais, aes(x = data, y = m_cost_radio)) +
 mes_INTERNET <- ggplot(dados_mensais, aes(x = data, y = m_cost_internet)) +
   geom_line()
 
-grid.arrange(mes_SMS, mes_TV, mes_NEWS, mes_RADIO, mes_INTERNET,  nrow = 5)
+grid.arrange(mes_SMS, mes_TV, mes_NEWS, mes_INTERNET, mes_RADIO,  nrow = 5)
 
 
 # Analisando os dados de investimento nos canais de midia da empresa em questão, notamos um 
@@ -243,7 +243,7 @@ plot(dadossazonais)
 
 
 #####   trocar variavel para verificar decomposição
-dados_mes_ts<-ts(dados_mes$m_cost_internet, frequency=12, start=c(2010,1))
+dados_mes_ts<-ts(dados_mes$m_CPI, frequency=12, start=c(2010,1))
 str(dados_mes_ts)
 head(dados_mes_ts)
 
@@ -257,10 +257,10 @@ plot(sazidata)
 ############## MÉDIAS MÓVEIS #########################################
 
 autoplot(ts(data_new_escala$m_demand)) +
-  autolayer(ma(data_new_escala$m_demand,7), series="5-MA") +
+  autolayer(ma(data_new_escala$m_demand,3), series="3-MA") +
   xlab("Year") + ylab("Demand") +
-  scale_colour_manual(values=c("Data"="grey50","5-MA"="red"),
-                      breaks=c("Data","5-MA"))
+  scale_colour_manual(values=c("Data"="grey50","3-MA"="red"),
+                      breaks=c("Data","3-MA"))
 
 ########### AUTOCORRELAÇÃO #########################
 
